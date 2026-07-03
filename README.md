@@ -61,8 +61,8 @@
 
 | 技能 | 用法 | 作用 | 模型 |
 |------|------|------|------|
-| **reasonix-arch-review** | 架构评审（编码前） | 专家模拟 + 6维度评分 + Go/No-Go | DeepSeek Pro 🧠 |
-| | 架构扫描（编码后） | 删除测试 + 依赖图 + HTML报告 | DeepSeek Pro 🧠 |
+| **基于reasonix-arch-review** | arch-review 架构评审（编码前） | 专家模拟 + 6维度评分 + Go/No-Go | DeepSeek Pro 🧠 |
+| | arch-scan 架构扫描（编码后） | 删除测试 + 依赖图 + HTML报告 | DeepSeek Pro 🧠 |
 
 ### 方法论注入（5个）
 
