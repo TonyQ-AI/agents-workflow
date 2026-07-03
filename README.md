@@ -193,6 +193,7 @@ docs/superpowers/plans/
 - **Reasonix** 桌面版 ≥ 1.0.0 或 CLI
 - **DeepSeek API Key** — 全部 Agent 使用，Pro 模型用于架构评审/扫描
 - 可选：**MiMo API Key** — 仅多模态场景
+- 可根据需求自行为各agent分配更合适的模型
 
 ---
 
@@ -236,14 +237,9 @@ reasonix-workflow/
 
 想让别人也用上这套工作流？
 
-1. **Fork 本仓库** 或推到你自己的 GitHub
-2. 告诉对方你的仓库地址
-3. 对方只需在 Reasonix 中说：
-   ```
-   /reasonix-workflow 安装工作流，仓库 https://github.com/你的用户名/reasonix-workflow
-   ```
-
-也可以直接安装安装器后说"装 Reasonix 工作流"并输入你的仓库地址。
+1. 告诉对方仓库地址
+2. 对方只需在 Reasonix 中说：
+   安装工作流，仓库 https://github.com/TonyQ-AI/reasonix-workflow
 
 ---
 
