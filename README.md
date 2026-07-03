@@ -7,7 +7,7 @@
 
 ## 快速体验
 
-在 Reasonix 中启动一个完整的开发工作流：
+在 Reasonix 中启动一个完整的开发工作流，如：
 
 ```
 /wf-orchestrator 我的项目: 新增用户登录模块，支持邮箱和微信登录
@@ -105,11 +105,9 @@
 安装工作流，仓库 https://github.com/TonyQ-AI/reasonix-workflow
 ```
 
-或者直接把安装器技能放进去，然后说：
+或者直接大白话告诉ai github项目名：reasonix-workflow 让它安装
 
-> 装 Reasonix 工作流
-
-安装器会自动下载所有技能并配置 AGENTS.md。
+会自动下载所有技能并配置 AGENTS.md。
 
 
 ### 方式二：Git Submodule
