@@ -102,7 +102,7 @@
 在 Reasonix 中执行：
 
 ```
-/reasonix-workflow 安装工作流，仓库 https://github.com/TonyQ-AI/reasonix-workflow
+安装工作流，仓库 https://github.com/TonyQ-AI/reasonix-workflow
 ```
 
 或者直接把安装器技能放进去，然后说：
