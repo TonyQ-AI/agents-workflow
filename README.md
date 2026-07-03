@@ -102,7 +102,7 @@
 在 Reasonix 中执行：
 
 ```
-/reasonix-workflow 安装工作流，仓库 https://github.com/<你的用户名>/reasonix-workflow
+/reasonix-workflow 安装工作流，仓库 https://github.com/TonyQ-AI/reasonix-workflow
 ```
 
 或者直接把安装器技能放进去，然后说：
@@ -111,20 +111,11 @@
 
 安装器会自动下载所有技能并配置 AGENTS.md。
 
-### 方式二：手动复制
+
+### 方式二：Git Submodule
 
 ```bash
-# 复制所有技能
-cp -r skills/* <你的项目>/.reasonix/skills/
-
-# 追加 AGENTS.md（进度检查规则）
-cp configs/AGENTS.md <你的项目>/AGENTS.md
-```
-
-### 方式三：Git Submodule
-
-```bash
-git submodule add https://github.com/<你的用户名>/reasonix-workflow
+git submodule add https://github.com/TonyQ-AI/reasonix-workflow
 cp -r reasonix-workflow/skills/* .reasonix/skills/
 cp reasonix-workflow/configs/AGENTS.md AGENTS.md
 ```
