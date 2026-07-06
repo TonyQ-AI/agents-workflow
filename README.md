@@ -192,6 +192,7 @@ docs/superpowers/plans/
 - **预设默认模型DeepSeek** — 需deepseek api支撑，全部 Agent 使用，Pro 模型用于架构评审/扫描
 - **预设默认多模态模型为MiMo** — 需要mimo api支撑，仅多模态场景
 - 可提供其他模型api，根据需求自行为各agent分配更合适的模型
+- 总之，可以一次性把所有你拥有的模型apikey都丢给他，然后让他自己根据模型的参数参数性能和擅长业务场景，自主为各agent分配模型。
 
 ---
 
