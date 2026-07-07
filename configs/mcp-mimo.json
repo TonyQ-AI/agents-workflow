@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "mimo-multimodal": {
+      "name": "mimo-multimodal",
+      "description": "小米 MiMo 多模态 MCP 服务器 — 图片/音频/视频理解 + TTS",
+      "command": "node",
+      "args": [
+        "F:\\ReasonixTest\\global-workspace\\mimo-agent-skill\\mcp-server\\dist\\index.js"
+      ],
+      "env": {
+        "MIMO_API_BASE": "https://api.xiaomimimo.com/v1",
+        "MIMO_API_KEY": "${MIMO_API_KEY}"
+      },
+      "tools": [
+        "understand_image",
+        "understand_audio",
+        "understand_video",
+        "tts"
+      ]
+    }
+  },
+  "skills": {
+    "image": "mimo-image-understanding",
+    "audio": "mimo-audio-understanding",
+    "video": "mimo-video-understanding",
+    "tts": "mimo-tts"
+  }
+}

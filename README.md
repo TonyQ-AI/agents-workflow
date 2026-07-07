@@ -43,7 +43,7 @@
 
 ---
 
-## 包含的全部技能（22个）
+## 包含的全部技能（26个）
 
 ### 核心工作流（7个）
 
@@ -93,6 +93,17 @@
 | **finishing-a-development-branch** | 分支集成、PR、合并规范 |
 | **verification-before-completion** | 完成前自动验证 |
 
+### 多模态 MCP 集成（4个）
+
+| 技能 | MCP 工具 | 作用 |
+|------|---------|------|
+| **mimo-image-understanding** | `understand_image` | 图片理解、OCR、UI评审、图表提取 |
+| **mimo-audio-understanding** | `understand_audio` | 音频转写、会议记录、内容摘要 |
+| **mimo-video-understanding** | `understand_video` | 视频描述、教程总结、动作检测 |
+| **mimo-tts** | `tts` | 文字转语音、语音克隆、自定义音色 |
+
+> 基于小米 MiMo 多模态模型，需设置环境变量 `MIMO_API_KEY`。工作流编排器已内置 MCP 注入机制，多模态场景自动调用。
+
 ---
 
 ## 安装
@@ -116,6 +127,8 @@
 git submodule add https://github.com/TonyQ-AI/reasonix-workflow
 cp -r reasonix-workflow/skills/* .reasonix/skills/
 cp reasonix-workflow/configs/AGENTS.md AGENTS.md
+# 可选：MiMo 多模态 MCP 参考配置
+cp reasonix-workflow/configs/mcp-mimo.json .
 ```
 
 ---
@@ -203,7 +216,8 @@ reasonix-workflow/
 ├── README.md                 ← 本文件
 ├── LICENSE                   ← MIT
 ├── configs/
-│   └── AGENTS.md             ← 进度检查规则（追加到目标项目）
+│   ├── AGENTS.md             ← 进度检查规则（追加到目标项目）
+│   └── mcp-mimo.json         ← MiMo MCP 参考配置（可选）
 └── skills/
     ├── wf-orchestrator/      ← 主编排器（入口）
     ├── wf-planner/           ← 规划Agent
@@ -227,6 +241,10 @@ reasonix-workflow/
     ├── finishing-a-development-branch/ ← 分支集成
     ├── verification-before-completion/ ← 完成验证
     ├── workflow-runner/           ← YAML工作流执行器
+    ├── mimo-image-understanding/  ← MiMo 图片理解 🆕
+    ├── mimo-audio-understanding/  ← MiMo 音频理解 🆕
+    ├── mimo-video-understanding/  ← MiMo 视频理解 🆕
+    ├── mimo-tts/                  ← MiMo 语音合成 🆕
     └── ...                       ← 更多辅助技能
 ```
 

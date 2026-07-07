@@ -36,6 +36,36 @@ description: 多Agent协同开发主编排器：一键启动全流程开发
 > 默认全用 DeepSeek（flash/pro 按角色分配）。需多模态时加 `--model 小米mimo` 覆盖。
 > 每个阶段启动子Agent时，在 `task` 调用中通过 `model` 参数指定。
 
+## 多模态 MCP 集成
+
+本工作流已集成 `mimo-multimodal` MCP 服务器，在以下场景自动利用 MiMo 多模态能力：
+
+| MCP 工具 | 对应技能 | 用途 |
+|---------|---------|------|
+| `understand_image` | `mimo-image-understanding` | 图片理解、OCR、UI 评审、图表提取、前端调试 |
+| `understand_audio` | `mimo-audio-understanding` | 音频转写、会议记录、内容摘要 |
+| `understand_video` | `mimo-video-understanding` | 视频描述、教程总结、动作检测 |
+| `tts` | `mimo-tts` | 文字转语音、语音克隆、自定义音色 |
+
+**在以下阶段可调用 MCP：**
+- **📋 规划阶段** — 用户提供截图/设计稿时，用图片 MCP 分析需求
+- **🧪 测试阶段** — 需要验证 UI 截图、分析测试日志截图时
+- **💻 编码阶段** — 需要参考前端截图、处理媒体文件时
+- **🔍 审查阶段** — 需要审查 UI 实现截图与设计稿差异时
+
+当子Agent任务涉及媒体文件处理时，编排器应确保 prompt 中注入 MCP 可用性提示：
+```
+===== 🎯 多模态 MCP 可用 =====
+本会话已配置 mimo-multimodal MCP 服务器，支持：
+- 图片理解（本地路径 / URL → describe / ocr / ui-review / chart-data / object-detect / web-debug）
+- 音频理解（本地路径 / URL → transcribe / describe / summarize）
+- 视频理解（本地路径 / URL → describe / summarize / action-detect）
+- TTS 语音合成（文本→语音，支持多音色）
+使用方法：调用 mcp__mimo-multimodal__<tool_name> 工具
+环境要求：需设置 MIMO_API_KEY 环境变量
+=====
+```
+
 示例：
 ```
 MediaManager: 新增视频批量导出功能，支持按标签筛选导出为Excel
