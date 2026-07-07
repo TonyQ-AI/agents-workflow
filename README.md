@@ -30,6 +30,7 @@
 ### 1.1 什么是 Reasonix Workflow？
 
 Reasonix Workflow 是一套基于 AI Agent 的全流程自动化软件开发流水线。它通过 **8 个专业化 Agent** 分工协作，实现软件开发从需求分析到部署方案的全流程自动化。
+任意coding agent均可安装，Reasonix+deepseek性价比最高。
 
 **核心理念：**
 - **分工专业化** — 每个 Agent 只做自己最擅长的事（默认规划用 Pro 模型深度推理，编码用 Flash 模型高速实现，可自行配置其他模型）
