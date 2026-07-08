@@ -36,7 +36,32 @@ description: 多Agent协同开发主编排器：一键启动全流程开发
 
 - `--model <模型名>`：全局覆盖所有子Agent使用的模型（deepseek / 小米mimo）
 
-- `--lite`：轻量模式，跳过架构评审和架构扫描阶段，适用于简单项目
+- `--lite`：轻量模式
+
+## task 工具调用约定
+
+编排器通过 `task` 工具派发子Agent。调用格式：
+
+```
+task(
+  subagent_name="wf-architect",    # 子Agent技能名（对应 skills/ 目录下的技能）
+  description="架构设计任务",        # 简短描述
+  prompt="<完整的上下文和指令>",      # 注入进度文件、产出物、方法论等
+  model="deepseek-v4-pro",          # 模型（按阶段分配表选择）
+  timeout=300                        # 超时秒数（编码=600）
+)
+```
+
+子Agent名称映射：
+| 阶段 | subagent_name | 对应技能目录 |
+|------|--------------|-------------|
+| 架构 | `wf-architect` | skills/wf-architect |
+| 编码 | `wf-developer` | skills/wf-developer |
+| 测试 | `wf-tester` | skills/wf-tester |
+| 审查 | `wf-reviewer` | skills/wf-reviewer |
+| 部署 | `wf-deployer` | skills/wf-deployer |
+
+注意：规划（步骤2）和领域建模（步骤3）由编排器直接执行，不使用 task。架构评审（步骤5）和架构扫描（步骤8）也由编排器直接执行。，跳过架构评审和架构扫描阶段，适用于简单项目
 
 - `--timeout <秒>`：子Agent超时时间（默认300秒）
 
@@ -437,7 +462,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 
 
-1. 输出阶段信息：**🟢 阶段 1/13：规划阶段 - 编排器（交互模式）**
+1. 记录阶段开始时间到 `phase_timestamps`，输出阶段信息：**🟢 阶段 1/13：规划阶段 - 编排器（交互模式）**
 
 2. **探索项目上下文**：检查项目已有文件结构、README、现有配置等
 
@@ -876,7 +901,11 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 2. 注入 finishing-a-development-branch 方法论
 3. 注入 chinese-commit-conventions 方法论
 4. 注入 chinese-git-workflow 方法论
-5. 执行 git 操作
+5. 执行 git 操作：
+   - `git add -A`
+   - 按 chinese-commit-conventions 格式生成 commit message
+   - `git commit -m "<生成的message>"`
+   - 询问用户：是否推送到远程（`git push`）？是否创建 PR？
 6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"branch_finish"`
 7. 验证 git commit 已完成
 8. **更新进度文件**：将 progress.md 中「🌿 分支收尾」行改为 ✅ 已完成
@@ -896,6 +925,8 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 2. 读取各阶段的产出摘要
 
 3. 写入 `{SESSION_DIR}/SUMMARY.md`：
+   - **若 `$LITE=true`**：跳过架构评审和架构扫描相关的行、详细小节和成本条目
+   - **若 `$LITE=false`**：按完整模板生成
 
 
 
