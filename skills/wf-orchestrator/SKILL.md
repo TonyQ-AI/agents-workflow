@@ -111,6 +111,8 @@ task(
 
 
 | MCP 工具 | 对应技能 | 用途 |
+| 百度 OCR | `baidu-unlimited-ocr` | 图片/PDF文字提取、发票/身份证/营业执照识别 |
+| `understand_image` | `mimo-image-understanding` | 图片理解、OCR、UI 评审、图表提取 |
 
 |---------|---------|------|
 
@@ -273,11 +275,17 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 2. 在项目根目录创建 `workflow/` 目录（如不存在）
 
-3. 创建带时间戳的会话目录：`workflow/<YYYYMMDD_HHmmss_项目名>/`
+2. **检查用户输入中的图片/PDF附件**：
+   - 若用户提供了图片（`.png`/`.jpg`）或 PDF（`.pdf`）作为需求输入：
+     ├── 自动调用 `baidu-unlimited-ocr` 提取文字内容
+     ├── 结果暂存为 `{SESSION_DIR}/ocr-extracted.md`
+     └── 后续所有阶段需将此文件作为补充输入参考
 
-4. 将会话路径存入变量 `$SESSION_DIR` 供后续使用
+9. 创建带时间戳的会话目录：`workflow/<YYYYMMDD_HHmmss_项目名>/`
 
-5. 写入会话清单文件 `{SESSION_DIR}/MANIFEST.md`：
+9. 将会话路径存入变量 `$SESSION_DIR` 供后续使用
+
+9. 写入会话清单文件 `{SESSION_DIR}/MANIFEST.md`：
 
 
 
@@ -463,6 +471,10 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 
 1. 记录阶段开始时间到 `phase_timestamps`，输出阶段信息：**🟢 阶段 1/13：规划阶段 - 编排器（交互模式）**
+
+1. **OCR内容整合**：若 `{SESSION_DIR}/ocr-extracted.md` 存在，读取OCR提取的文字作为需求补充
+   - 对照OCR内容与用户描述，确保需求澄清时不遗漏图片/PDF中的信息
+
 
 2. **探索项目上下文**：检查项目已有文件结构、README、现有配置等
 
@@ -905,7 +917,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 ### 步骤11：文档质量检查 — 中文规范审查
 
 1. 输出阶段信息：**🟢 阶段 10/13：文档检查 - chinese-documentation**
-2. 读取工作流产生的所有文档文件
+2. 读取工作流产生的所有文档文件。若存在图片/扫描件（`.png`/`.jpg`/`.pdf`），自动调用 `baidu-unlimited-ocr` 提取文字后纳入检查范围
 3. 注入 chinese-documentation 方法论：检查排版、术语、标点、段落结构
 4. 对不符合规范的部分给出修改建议并自动修正
 5. **写入 checkpoint**：更新 `last_completed_phase` 为 `"doc_check"`
