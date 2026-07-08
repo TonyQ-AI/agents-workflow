@@ -30,9 +30,9 @@ description: 多Agent协同开发主编排器：一键启动全流程开发
 
 可选参数（追加在末尾）：
 
-- `--from <阶段>`：从指定阶段开始（plan/arch/dev/test/review/deploy）
+- `--from <阶段>`：从指定阶段开始（plan/domain/arch/arch-review/dev/test/arch-scan/review/deploy/doc-check/branch-finish/version-tracking）
 
-- `--to <阶段>`：在指定阶段结束
+- `--to <阶段>`：在指定阶段结束（同上）
 
 - `--model <模型名>`：全局覆盖所有子Agent使用的模型（deepseek / 小米mimo）
 
@@ -463,7 +463,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 8. 请用户审查计划，用户批准后才进入下一阶段
 
-9. **更新进度文件**：将 progress.md 中「📋 规划」行改为 `✅ 已完成`，在 findings.md 追加规划阶段摘要
+9. 验证 {SESSION_DIR}/01-plan.md 已生成
+
+10. **更新进度文件**：将 progress.md 中「📋 规划」行改为 `✅ 已完成`，在 findings.md 追加规划阶段摘要
 
 10. **写入 checkpoint**：更新 `{SESSION_DIR}/checkpoint.json` 中的 `last_completed_phase` 为 `"planning"`
 
@@ -921,7 +923,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 |-----|------|------|---------|
 
-| 📋 规划 | DeepSeek Pro 🧠 | deepseek-v4-pro | 01-plan.md |
+| 📋 规划 | DeepSeek Pro 🧠 | deepseek-v4-pro | 01-plan.md + 设计规格 |
+
+| 🧩 领域建模 | DeepSeek Pro 🧠 | deepseek-v4-pro | domain-model.md |
 
 | 🏗️ 架构 | DeepSeek Pro 🧠 | deepseek-v4-pro | 02-design.md |
 
