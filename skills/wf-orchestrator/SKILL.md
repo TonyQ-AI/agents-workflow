@@ -270,13 +270,15 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 ### 步骤1：解析参数并创建工作流会话目录
 
+**前置检查：中断恢复** — 扫描 `workflow/` 下是否存在未完成的 checkpoint，若存在则向用户展示并询问恢复/新建/放弃。
+
 
 
 1. 解析参数，提取 `项目名`、`需求描述` 和可选参数。如果包含 `--no-superpowers`，设置 `$NO_SUPERPOWERS=true`。如果包含 `--lite`，设置 `$LITE=true`。如果包含 `--timeout`，提取超时值存入 `$TIMEOUT`
 
 2. 在项目根目录创建 `workflow/` 目录（如不存在）
 
-2. **检查用户输入中的图片/PDF附件**：
+3. **检查用户输入中的图片/PDF附件**：
    - 若用户提供了图片（`.png`/`.jpg`）或 PDF（`.pdf`）作为需求输入：
      ├── 自动调用 `baidu-unlimited-ocr` 提取文字内容
      ├── 结果暂存为 `{SESSION_DIR}/ocr-extracted.md`
@@ -473,7 +475,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 1. 记录阶段开始时间到 `phase_timestamps`，输出阶段信息：**🟢 阶段 1/13：规划阶段 - 编排器（交互模式）**
 
-1. **OCR内容整合**：若 `{SESSION_DIR}/ocr-extracted.md` 存在，读取OCR提取的文字作为需求补充
+2. **OCR内容整合**：若 `{SESSION_DIR}/ocr-extracted.md` 存在，读取OCR提取的文字作为需求补充
    - 对照OCR内容与用户描述，确保需求澄清时不遗漏图片/PDF中的信息
 
 
@@ -521,6 +523,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 1. 输出阶段信息：**🟢 阶段 2/13：领域建模 - reasonix-domain-modeling → DeepSeek Pro 🧠**
 
 2. 读取规划阶段产出的设计规格 `{SPECS_PATH}`（用户确认的原始需求基准）
+- `KNOWLEDGE_PATH`：`{项目根目录}/docs/superpowers/knowledge/KNOWLEDGE.md`（跨会话知识库）
    - 交叉验证：提取的领域概念是否与需求规格一致？有无遗漏？ `docs/superpowers/specs/YYYY-MM-DD-<project>-design.md`
 
 3. 注入 reasonix-domain-modeling 方法论：
@@ -949,7 +952,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    - 按 chinese-commit-conventions 格式生成 commit message
    - `git commit -m "<生成的message>"`
    - 询问用户：是否推送到远程（`git push`）？是否创建 PR？
-6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"branch_finish"`
+7. **写入 checkpoint**：更新 `last_completed_phase` 为 `"branch_finish"`
 7. 验证 git commit 已完成
 8. **更新进度文件**：将 progress.md 中「🌿 分支收尾」行改为 ✅ 已完成
 
@@ -1055,6 +1058,11 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 
 
+### 🧩 领域建模阶段（DeepSeek Pro 🧠 deepseek-v4-pro）
+
+{domain-model 核心结论概要}
+
+
 ### 📋 规划阶段（DeepSeek Pro 🧠 deepseek-v4-pro）
 
 {plan 核心结论概要}
@@ -1099,6 +1107,28 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 - 总体评价：{通过/有条件通过/需修改}
 
+
+
+### 🚀 部署阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
+
+- 构建状态：{成功/失败}
+
+- 建议版本：{x.y.z}
+
+
+### 📖 文档检查阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
+
+{doc-check 核心结论概要}
+
+
+### 🌿 分支收尾阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
+
+{branch-finish 核心结论概要}
+
+
+### 📊 版本登记阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
+
+{version-tracking 核心结论概要}
 
 
 ### 🚀 部署阶段（DeepSeek Flash ⚡ deepseek-v4-flash）

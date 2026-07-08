@@ -1,6 +1,6 @@
 # Reasonix Workflow
 
-> 多 Agent 协同开发全流程自动化流水线 · 13 阶段 · 36 技能 · 3 套多模态 MCP · 知识沉淀  
+> 多 Agent 协同开发全流程自动化流水线 · 13 阶段 · 33 技能（+3 辅助独立技能） · 3 套多模态 MCP · 知识沉淀  
 > 仓库：https://github.com/TonyQ-AI/reasonix-workflow
 
 ---
