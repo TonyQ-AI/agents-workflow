@@ -505,7 +505,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 7. 同步更新 `CONTEXT.md`（通用语言）
 
-8. **写入 checkpoint**：更新 `last_completed_phase` 为 `"domain-modeling"`
+8. **写入 checkpoint**：更新 `last_completed_phase` 为 `"domain_modeling"`
 
 9. **更新进度文件**：将 progress.md 中「🧩 领域建模」行改为 `✅ 已完成`，在 findings.md 追加领域模型摘要
 
@@ -602,7 +602,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
    - 🔴：向用户报告严重问题，询问是否返回架构阶段重做
 
-6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch-review"`
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch_review"`
 
 7. **更新进度文件**：将 progress.md 中「🏛️ 架构评审」行改为 `✅ 已完成`，在 findings.md 追加评审结论
 
@@ -751,7 +751,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 5. 如用户选择改进点，引导到 domain-modeling 深化
 
-6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch-scan"`
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch_scan"`
 
 7. **更新进度文件**：将 progress.md 中「🔬 架构扫描」行改为 `✅ 已完成`，在 findings.md 追加扫描关键发现
 
@@ -866,7 +866,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 2. 读取工作流产生的所有文档文件
 3. 注入 chinese-documentation 方法论：检查排版、术语、标点、段落结构
 4. 对不符合规范的部分给出修改建议并自动修正
-5. **写入 checkpoint**：更新 `last_completed_phase` 为 `"doc-check"`
+5. **写入 checkpoint**：更新 `last_completed_phase` 为 `"doc_check"`
 6. 验证文档质量问题列表已产出
 7. **更新进度文件**：将 progress.md 中「📖 文档检查」行改为 ✅ 已完成
 
@@ -877,7 +877,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 3. 注入 chinese-commit-conventions 方法论
 4. 注入 chinese-git-workflow 方法论
 5. 执行 git 操作
-6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"branch-finish"`
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"branch_finish"`
 7. 验证 git commit 已完成
 8. **更新进度文件**：将 progress.md 中「🌿 分支收尾」行改为 ✅ 已完成
 
@@ -886,7 +886,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 1. 输出阶段信息：**🟢 阶段 12/13：版本登记 - vt**
 2. 注入 vt 方法论：记录项目最新路径、功能、时间戳
 3. 生成版本记录条目
-4. **写入 checkpoint**：更新 `last_completed_phase` 为 `"version-tracking"`
+4. **写入 checkpoint**：更新 `last_completed_phase` 为 `"version_tracking"`
 5. 验证版本记录已写入
 6. **更新进度文件**：将 progress.md 中「📊 版本登记」行改为 ✅ 已完成
 
@@ -923,7 +923,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 |-----|------|------|---------|
 
-| 📋 规划 | —（编排器直管） | — | 01-plan.md + 设计规格 |
+| 📋 规划 | DeepSeek Pro 🧠 | deepseek-v4-pro | 01-plan.md + 设计规格 |
 
 | 🧩 领域建模 | DeepSeek Pro 🧠 | deepseek-v4-pro | domain-model.md |
 
@@ -961,9 +961,6 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
   | 🏗️ 架构 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
 
-  | 📖 文档检查 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
-  | 🌿 分支收尾 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
-  | 📊 版本登记 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
   | 🏛️ 架构评审 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
 
   | 💻 编码 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
@@ -975,9 +972,6 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
   | 🔍 审查 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
 
   | 🚀 部署 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
-  | 📖 文档检查 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
-  | 🌿 分支收尾 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
-  | 📊 版本登记 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
 
 - 关于 token 精确计费请查看模型提供商定价页
 
@@ -986,11 +980,6 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 ### 📋 规划阶段（DeepSeek Pro 🧠 deepseek-v4-pro）
 
 {plan 核心结论概要}
-
-### 🧩 领域建模阶段（DeepSeek Pro 🧠 deepseek-v4-pro）
-
-{domain-model 核心结论概要}
-
 
 
 
@@ -1037,20 +1026,6 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 ### 🚀 部署阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
 
 - 构建状态：{成功/失败}
-
-### 📖 文档检查阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
-
-{doc-check 核心结论概要}
-
-
-### 🌿 分支收尾阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
-
-{branch-finish 核心结论概要}
-
-
-### 📊 版本登记阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
-
-{version-tracking 核心结论概要}
 
 - 建议版本：{x.y.z}
 
