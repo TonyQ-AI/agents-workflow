@@ -58,7 +58,6 @@ description: 多Agent协同开发主编排器：一键启动全流程开发
 
 |-------|------|---------|------|
 
-| **wf-planner** | 规划 | **DeepSeek Pro** 🧠 | 需求分析需要最强推理，deepseek-v4-pro + thinking mode 深度最优 |
 
 | **wf-architect** | 架构 | **DeepSeek Pro** 🧠 | 架构推演是最高难度推理任务，deepseek-v4-pro 复杂思考最合适 |
 
@@ -168,7 +167,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 |------|--------------------------------|------|
 
-| 📋 规划 (wf-planner) | brainstorming + writing-plans | 先做需求分析，再拆执行步骤 |
+| 📋 **规划 (交互)** | **brainstorming + writing-plans** | **编排器亲自与用户逐轮对话完成需求澄清和计划** |
 
 | 🧩 **领域建模 (domain-modeling)** | **reasonix-domain-modeling** | **提取领域概念、实体关系、通用语言** |
 
