@@ -57,7 +57,7 @@ Reasonix Workflow 是一套多 Agent 协同开发流水线，通过**编排器 +
 
 | 参数 | 说明 |
 |------|------|
-| `--from <阶段>` | 起始阶段：planning/domain-modeling/architecture/arch-review/coding/testing/arch-scan/review/deploy/doc-check/branch-finish/version-tracking |
+| `--from <阶段>` | 起始阶段：planning/domain_modeling/architecture/arch_review/coding/testing/arch_scan/review/deploy/doc_check/branch_finish/version-tracking |
 | `--to <阶段>` | 结束阶段（同上） |
 | `--model <模型>` | 全局覆盖模型 |
 | `--lite` | 轻量模式，跳过架构评审和架构扫描 |
