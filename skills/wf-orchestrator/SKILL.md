@@ -486,7 +486,10 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    - 此文件作为**用户确认的原始需求基准**（Single Source of Truth）
    - 后续所有阶段都必须对照此文件交叉验证，防止需求漂移
 
-7. **编写实施计划**（调用 writing-plans 风格），写入 `{SESSION_DIR}/01-plan.md`
+7. **编写实施计划**（参考 `executing-plans` + `writing-plans` 风格），产出三文件结构：
+   - `{SESSION_DIR}/01-plan.md`：任务清单（每项包含：任务描述、负责阶段、预期产出、依赖项）
+   - `docs/superpowers/plans/progress.md`：12阶段进度追踪（⏳待开始/🔄进行中/✅已完成）
+   - `docs/superpowers/plans/findings.md`：关键发现记录（每个阶段的洞察和决策）
 
 8. 请用户审查计划，用户批准后才进入下一阶段
 
@@ -647,6 +650,17 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 3. 否则，使用 `task` 工具启动编码子Agent（模型：DeepSeek Flash），传入完整的 prompt（包含方法论注入）：
 
    ```
+
+   **任务复杂度判断**（参考 ）：
+   - 简单任务（≤3 个独立模块）：单个  执行
+   - 复杂任务（>3 个独立模块，如前端+后端+数据库）：
+     按模块拆分为多个并行 ，完成后  审查
+
+   - 简单任务（≤3个独立模块）：单个 task(wf-developer) 执行
+   - 复杂任务（>3个独立模块，如前端+后端+数据库）：按模块拆分为多个并行 task(implementer)，完成后 task(code-reviewer) 审查
+   **任务复杂度判断**（参考 `subagent-driven-development`）：
+   - 简单任务（<=3 个独立模块）：单个 `task(wf-developer)` 执行
+   - 复杂任务（>3 个独立模块，如前端+后端+数据库）：按模块拆分为多个并行子任务，完成后统一审查
 
    ===== 🎯 来自 superpowers:test-driven-development =====
 
@@ -904,7 +918,15 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 2. 注入 finishing-a-development-branch 方法论
 3. 注入 chinese-commit-conventions 方法论
 4. 注入 chinese-git-workflow 方法论
-5. 执行 git 操作：
+5. **分支策略检查**（参考 `using-git-worktrees`）：
+   - 若当前在 `master`/`main` 上直接开发：
+     ├── 询问用户：是否为本次变更创建独立的 feature 分支？
+     ├── 若同意：`git worktree add -b feature/<功能名> ../feature-<功能名>`
+     ├── 在新 worktree 中完成提交
+     └── 原目录保持干净，可并行处理其他任务
+   - 若已在 feature 分支或用户拒绝创建 worktree：继续正常流程
+
+6. 执行 git 操作：
    - `git add -A`
    - 按 chinese-commit-conventions 格式生成 commit message
    - `git commit -m "<生成的message>"`
