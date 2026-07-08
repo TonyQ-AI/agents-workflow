@@ -21,6 +21,7 @@ runAs: subagent
 - `{工作流目录}/03-implementation/CHANGES.md`（编码Agent产出）
 - `{工作流目录}/04-test/TEST_REPORT.md`（测试Agent产出）
 - `docs/superpowers/plans/findings.md`（架构扫描发现和知识沉淀）
+- `{项目根目录}/docs/superpowers/specs/*-design.md`（用户确认后的原始设计规格，用于与实现结果交叉验证）
 
 ## 你的任务
 

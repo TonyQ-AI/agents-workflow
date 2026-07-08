@@ -19,6 +19,7 @@ runAs: subagent
 - `{工作流目录}/01-plan.md`（规划Agent产出）
 - `{工作流目录}/02-design.md`（架构Agent产出）
 - `{工作流目录}/03-implementation/CHANGES.md`（编码Agent产出）
+- `{项目根目录}/docs/superpowers/specs/*-design.md`（用户确认后的原始设计规格，用于交叉验证）
 
 ## 你的任务
 

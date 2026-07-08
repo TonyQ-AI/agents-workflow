@@ -22,6 +22,7 @@ runAs: subagent
 - `{工作流目录}/03-implementation/CHANGES.md`
 - `{工作流目录}/04-test/TEST_REPORT.md`（测试报告，含测试通过率）
 - `{工作流目录}/05-review.md`
+- `{项目根目录}/docs/superpowers/specs/*-design.md`（用户确认后的原始设计规格，用于与最终产出交叉验证）
 
 ## 你的任务
 
