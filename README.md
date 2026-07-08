@@ -1,83 +1,179 @@
 # Reasonix Workflow
 
-> 多 Agent 协同开发全流程自动化流水线 · 13 阶段 · 36 技能 · 2 套多模态 MCP
+> 多 Agent 协同开发全流程自动化流水线 · 13 阶段 · 36 技能 · 3 套多模态 MCP  
+> 仓库：https://github.com/TonyQ-AI/reasonix-workflow
 
 ---
 
 ## 概述
 
-Reasonix Workflow 是一套多 Agent 协同开发流水线，通过**编排器 + 6 个专业化子 Agent** 分工协作，配合**交互式需求澄清**、**领域建模**、**智能方法论注入**和**完整的产出门控**，实现软件开发全流程自动化。
+Reasonix Workflow 是一套多 Agent 协同开发流水线。你给一句话需求，编排器自动串联 **规划→领域建模→架构设计→架构评审→编码→测试→架构扫描→审查→部署→文档检查→分支收尾→版本登记→总结** 全流程。
 
-### 核心理念
+### 核心能力
 
-- **交互式澄清** — 规划阶段编排器亲自与用户逐轮对话，每次一个问题
-- **领域驱动** — 规划后执行领域建模，提取实体关系、通用语言
-- **分工专业化** — Pro 模型负责推理（规划/架构/评审），Flash 负责执行（编码/测试/部署）
-- **方法论驱动** — 根据任务类型智能注入 TDD / 系统化调试 / 代码审查
-- **容错设计** — task 不可用时自动降级为单Agent顺序执行
-- **全产出门控** — 每个阶段都有明确的产出验证
-- **可恢复** — checkpoint + progress.md + findings.md 三文件体系
+| 能力 | 说明 |
+|:-----|:------|
+| **交互式需求澄清** | 编排器与用户逐轮对话，每次一个问题，不猜测 |
+| **领域建模** | 规划后提取实体关系与通用语言，消除术语歧义 |
+| **原始需求交叉验证** | 每个子 Agent 对照用户确认的 specs 文件校验，防止需求漂移 |
+| **智能模型分配** | Pro 推理（规划/架构/评审/审查），Flash 执行（编码/测试/部署/文档） |
+| **方法论注入** | TDD / 系统化调试 / 代码审查 / 中文规范等按阶段自动注入 |
+| **并行调度** | `--parallel` 参数实现编码与测试并行执行 |
+| **断点续跑** | `--from` / `--to` + checkpoint 三文件体系，中断后可精确恢复 |
+| **全产出门控** | 每个阶段末尾验证产出文件，不凭子 Agent 口头声称 |
+| **轻量模式** | `--lite` 跳过架构评审和架构扫描，加速小型需求 |
+| **自动 OCR** | 用户上传图片/PDF 需求时自动提取文字 |
+| **大任务拆分** | 复杂编码自动拆分为并行子任务 |
 
-## 13 阶段流程
-
-```
-①规划(交互) → ②领域建模 → ③架构 → ④架构评审(--lite跳过)
-→ ⑤编码(含UI按需) → ⑥测试 → ⑦架构扫描(--lite跳过)
-→ ⑧审查 → ⑨部署 → ⑩文档检查 → ⑪分支收尾 → ⑫版本登记 → ⑬总结
-```
-
-### 执行者与模型
-
-| 阶段 | 执行者 | 模型 |
-|------|--------|------|
-| ①规划 | 编排器(交互) | — |
-| ②领域建模 | task → 子Agent | DeepSeek Pro 🧠 |
-| ③架构 | task → 子Agent | DeepSeek Pro 🧠 |
-| ④架构评审 | 编排器注入方法论 | — |
-| ⑤编码 | task → 子Agent | DeepSeek Flash ⚡ |
-| ⑥测试 | task → 子Agent | DeepSeek Flash ⚡ |
-| ⑦架构扫描 | 编排器注入方法论 | — |
-| ⑧审查 | task → 子Agent | DeepSeek Pro 🧠 |
-| ⑨部署 | task → 子Agent | DeepSeek Flash ⚡ |
-| ⑩文档检查 | 编排器 | — |
-| ⑪分支收尾 | 编排器 | — |
-| ⑫版本登记 | 编排器 | — |
-| ⑬总结 | 编排器 | — |
+---
 
 ## 快速开始
 
 ```bash
-/wf-orchestrator 项目名: 需求描述
-/wf-orchestrator 项目名: 需求描述 --lite       # 跳过架构评审和扫描
-/wf-orchestrator 项目名: 需求描述 --from coding  # 从编码阶段开始
-/wf-orchestrator 项目名: 需求描述 --model deepseek # 覆盖模型
+# 标准全流程
+/wf-orchestrator MediaManager: 新增视频批量导出功能，支持按标签筛选
+
+# 轻量模式（跳架构评审+扫描）
+/wf-orchestrator MediaManager: 修复登录页样式 --lite
+
+# 断点恢复
+/wf-orchestrator MediaManager: 新增导出 --from coding
+
+# 编码测试并行
+/wf-orchestrator MediaManager: 重构用户模块 --parallel
 ```
+
+---
 
 ## 参数
 
 | 参数 | 说明 |
 |------|------|
-| `--from <阶段>` | 起始阶段：planning/domain_modeling/architecture/arch_review/coding/testing/arch_scan/review/deploy/doc_check/branch_finish/version-tracking |
+| `--from <阶段>` | 起始阶段：planning / domain_modeling / architecture / arch_review / coding / testing / arch_scan / review / deploy / doc_check / branch_finish / version_tracking |
 | `--to <阶段>` | 结束阶段（同上） |
-| `--model <模型>` | 全局覆盖模型 |
-| `--lite` | 轻量模式，跳过架构评审和架构扫描 |
-| `--timeout <秒>` | 子Agent超时，默认300秒 |
-| `--no-superpowers` | 禁用方法论注入 |
+| `--parallel` | 编码与测试并行执行 |
+| `--lite` | 跳过架构评审（步骤5）和架构扫描（步骤8） |
+| `--model <模型>` | 全局覆盖所有子 Agent 的模型（deepseek / 小米mimo） |
+| `--timeout <秒>` | 子 Agent 超时，默认 300 秒（编码阶段 600 秒） |
+| `--no-superpowers` | 禁用所有方法论注入 |
+
+---
+
+## 13 阶段流程
+
+```
+① 规划(交互) → ② 领域建模 → ③ 架构设计 → ④ 架构评审 → ⑤ 编码(+TDD)
+→ ⑥ 测试 → ⑦ 架构扫描 → ⑧ 审查 → ⑨ 部署 → ⑩ 文档检查
+→ ⑪ 分支收尾 → ⑫ 版本登记 → ⑬ 总结
+```
+
+### 各阶段详解
+
+| # | 阶段 | 执行方式 | 模型 | 产出 | 交叉验证 |
+|:--|:-----|:-------|:----:|:-----|:-------:|
+| ① | 📋 规划 | 编排器+用户交互 | Pro 🧠 | 01-plan.md + specs/*.md | — |
+| ② | 🧩 领域建模 | 编排器执行 | Pro 🧠 | domain-model.md | ✅ |
+| ③ | 🏗️ 架构设计 | task → wf-architect | Pro 🧠 | 02-design.md | ✅ |
+| ④ | 🏛️ 架构评审 | 编排器执行 | Pro 🧠 | 03-arch-review.md | — |
+| ⑤ | 💻 编码 | task → wf-developer | Flash ⚡ | 代码 + CHANGES.md | ✅ |
+| ⑥ | 🧪 测试 | task → wf-tester | Flash ⚡ | TEST_REPORT.md | ✅ |
+| ⑦ | 🔬 架构扫描 | 编排器执行 | Pro 🧠 | 架构诊断报告 | — |
+| ⑧ | 🔍 审查 | task → wf-reviewer | Pro 🧠 | 05-review.md | ✅ |
+| ⑨ | 🚀 部署 | task → wf-deployer | Flash ⚡ | DEPLOY.md | ✅ |
+| ⑩ | 📖 文档检查 | 编排器执行 | Flash ⚡ | doc-check-report.md | — |
+| ⑪ | 🌿 分支收尾 | 编排器执行 | Flash ⚡ | git commit + PR | — |
+| ⑫ | 📊 版本登记 | 编排器执行 | Flash ⚡ | .vt.json | — |
+| ⑬ | 🟢 总结 | 编排器生成 | — | SUMMARY.md | — |
+
+---
+
+## 防需求漂移机制
+
+每个子 Agent 同时收到两份输入：
+
+1. **前序阶段的衍生文档**（承上：如架构设计读领域模型）
+2. **用户确认的原始需求基准** `specs/*-design.md`（校验：对照原件查偏离）
+
+每层独立交叉验证，发现偏离时显式标注。
+
+---
 
 ## 技能体系（36个）
 
-| 分类 | 数量 |
-|------|:----:|
-| 核心工作流 | 6 (orchestrator + 5 sub-agents) |
-| 架构评审/扫描 | 1 (2 种用法) |
-| 方法论注入 | 6 |
-| 规划与支撑 | 5 |
-| 领域建模 | 1 |
-| 文档/提交/版本 | 4 |
-| UI 设计 | 1 |
-| 多模态 MCP | 4 |
-| 其他独立技能 | 8 |
-| **总计** | **36** |
+### 核心工作流（7个）
+
+| 技能 | 角色 | 模型 |
+|------|:----|:----:|
+| wf-orchestrator | 主编排器 | — |
+| wf-architect | 架构设计 | Pro 🧠 |
+| wf-developer | 编码实现 | Flash ⚡ |
+| wf-tester | 测试执行 | Flash ⚡ |
+| wf-reviewer | 代码审查 | Pro 🧠 |
+| wf-deployer | 部署发布 | Flash ⚡ |
+| wf-planner | 参考技能（已被编排器取代） | — |
+
+### 架构与设计（4个）
+
+| 技能 | 作用 |
+|------|------|
+| reasonix-arch-review | 架构评审（6维评分 + Go/No-Go）+ 架构扫描（依赖检测 + 循环检测） |
+| reasonix-domain-modeling | 实体提取、关系定义、通用语言建立 |
+| reasonix-ui-design | 专业 UI/UX 设计（防AI模板化） |
+| reasonix-handoff | 会话交接 |
+
+### 方法论注入（7个）
+
+| 技能 | 注入阶段 | 作用 |
+|------|---------|------|
+| brainstorming | 规划 | 需求探索与方案对比 |
+| writing-plans | 规划 | 结构化任务分解 |
+| executing-plans | 规划 | 三文件进度追踪（plan/progress/findings） |
+| test-driven-development | 编码 | 红→绿→重构循环 |
+| systematic-debugging | 编码 | 定位→分析→假设→修复→验证 |
+| subagent-driven-development | 编码 | 大任务拆分为并行子 Agent |
+| dispatching-parallel-agents | 测试 | 独立测试并行执行 |
+
+### 审查与规范（4个）
+
+| 技能 | 作用 |
+|------|------|
+| requesting-code-review | 逐文件标注行号 |
+| receiving-code-review | 审查反馈后验证实施 |
+| chinese-code-review | 符合国内团队文化的中文审查 |
+| chinese-documentation | 排版、术语、结构规范 |
+
+### 提交与版本（5个）
+
+| 技能 | 作用 |
+|------|------|
+| chinese-commit-conventions | 中文 Git 提交规范 + changelog |
+| chinese-git-workflow | Gitee/Coding/极狐 GitLab 工作流 |
+| finishing-a-development-branch | 分支集成/PR/合并规范 |
+| using-git-worktrees | 隔离 Git 工作树并行开发 |
+| vt | 项目版本追踪 |
+
+### 辅助工具（6个）
+
+| 技能 | 作用 |
+|------|------|
+| trigger-commands | 醒醒/开新坑/存档/读档 |
+| workflow-runner | 通用 YAML 工作流执行器 |
+| verification-before-completion | 完成前自动验证产出 |
+| writing-skills | 创建/编辑/验证技能文件 |
+| mcp-builder | 系统化构建 MCP 工具 |
+| using-superpowers | 技能查找与使用方法论 |
+
+### 多模态 MCP（3套 / 5个技能）
+
+| MCP | 技能 | 用途 |
+|:----|:----|:-----|
+| **MiMo 多模态** | mimo-image-understanding | 图片理解、OCR、UI 审查 |
+| | mimo-audio-understanding | 音频转写、会议记录 |
+| | mimo-video-understanding | 视频内容分析 |
+| | mimo-tts | 文字转语音 |
+| **百度 OCR** | baidu-unlimited-ocr | 图片/PDF 文字提取、发票/身份证识别 |
+
+---
 
 ## 配置
 
@@ -86,21 +182,86 @@ Reasonix Workflow 是一套多 Agent 协同开发流水线，通过**编排器 +
 ```env
 DEEPSEEK_API_KEY=sk-xxx
 MIMO_API_KEY=sk-xxx
+BAIDU_OCR_API_KEY=sk-xxx
 ```
 
 ### MCP 服务器
 
 ```toml
+# MiMo 多模态
 [[plugins]]
 name    = "mimo-multimodal"
 command = "npx"
 args    = ["mimo-mcp-server", "-y"]
 env     = { MIMO_API_KEY = "${MIMO_API_KEY}" }
+
+# 百度 OCR
+[[plugins]]
+name    = "baidu-ocr-document"
+type    = "http"
+url     = "https://aip.baidubce.com/mcp/document/sse"
+headers = { Authorization = "Bearer ${BAIDU_OCR_API_KEY}" }
 ```
 
-## 文档
+---
 
-完整工作流说明书见 [WORKFLOW_MANUAL.md](WORKFLOW_MANUAL.md)。
+## 会话目录结构
+
+```
+workflow/20260709_143000_新增批量导出/
+├── 01-plan.md                 ← 规划产出
+├── domain-model.md            ← 领域模型
+├── 02-design.md               ← 架构设计
+├── 03-arch-review.md          ← 架构评审
+├── 03-implementation/         ← 编码产出
+│   └── CHANGES.md
+├── 04-test/                   ← 测试产出
+│   └── TEST_REPORT.md
+├── architecture-scan.html     ← 架构扫描报告
+├── 05-review.md               ← 审查报告
+├── 06-deploy/                 ← 部署方案
+│   └── DEPLOY.md
+├── doc-check-report.md        ← 文档检查报告
+├── checkpoint.json            ← 断点恢复状态
+├── SUMMARY.md                 ← 会话总结
+└── ocr-extracted.md           ← OCR 提取结果（条件生成）
+```
+
+---
+
+## 完整文档
+
+详见 [WORKFLOW_MANUAL.md](WORKFLOW_MANUAL.md) — 完整的13阶段执行说明、防幻觉机制、中断恢复、会话交接。
+
+---
+
+## 更新日志
+
+### v3.2（2026-07-09）
+
+- ✅ 原始需求交叉验证：每层子 Agent 对照 specs 校验，防止需求漂移
+- ✅ `--parallel` 实现：编码与测试并行执行
+- ✅ `--to` 实现：指定结束阶段后自动跳转总结
+- ✅ `--from` 恢复：前置阶段产出摘要注入后续 prompt
+- ✅ 百度 OCR 集成：自动检测图片/PDF → 提取文字 → 注入需求
+- ✅ 大任务拆分：复杂编码自动拆并行子 Agent
+- ✅ Git worktree 支持：分支隔离防 main 污染
+- ✅ CHECKPOINT 恢复检测：中断后自动提示恢复
+- ✅ 26 项 P0-P3 健壮性修复
+- ✅ SUMMARY 模板 + 成本表 + 产出物列表全面补全
+
+### v3.1（2026-07-09）
+
+- 规划/领域建模改由编排器直接执行（非 task）
+- 步骤编号修正、checkpoint 与 --from 命名统一（snake_case）
+
+### v3.0（2026-07-07）
+
+- 从 8 阶段扩展为 13 阶段
+- 新增领域建模、文档检查、分支收尾、版本登记
+- wf-planner 改为参考技能
+
+---
 
 ## 许可证
 
