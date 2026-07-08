@@ -17,6 +17,7 @@ runAs: subagent
 
 你将自动读取以下文件作为输入：
 - `{工作流目录}/01-plan.md`（规划Agent产出）
+- `docs/superpowers/domain-models/*.md`（领域建模Agent产出的领域模型、实体关系、通用语言）
 
 ## 你的任务
 

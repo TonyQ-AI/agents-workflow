@@ -20,6 +20,7 @@ runAs: subagent
 - `{工作流目录}/01-plan.md`
 - `{工作流目录}/02-design.md`
 - `{工作流目录}/03-implementation/CHANGES.md`
+- `{工作流目录}/04-test/TEST_REPORT.md`（测试报告，含测试通过率）
 - `{工作流目录}/05-review.md`
 
 ## 你的任务

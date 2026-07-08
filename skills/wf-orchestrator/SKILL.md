@@ -1,4 +1,4 @@
-﻿---
+---
 name: wf-orchestrator
 description: 多Agent协同开发主编排器：一键启动全流程开发
 ---
@@ -17,6 +17,8 @@ description: 多Agent协同开发主编排器：一键启动全流程开发
 - `--from <阶段>`：从指定阶段开始（plan/arch/dev/test/review/deploy）
 - `--to <阶段>`：在指定阶段结束
 - `--model <模型名>`：全局覆盖所有子Agent使用的模型（deepseek / 小米mimo）
+- `--lite`：轻量模式，跳过架构评审和架构扫描阶段，适用于简单项目
+- `--timeout <秒>`：子Agent超时时间（默认300秒）
 - `--parallel`：开发者与测试者并行执行（部分测试准备可与开发同步）
 - `--no-superpowers`：禁用所有 superpowers 方法论注入（默认启用）
 
@@ -95,6 +97,11 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 ### 注入规则
 
 - 在步骤1中已解析 `--no-superpowers` 并设置 `$NO_SUPERPOWERS` 标志
+- **智能选择**：注入方法论时根据任务类型识别，不无脑全注入：
+  - 新功能开发 → 注入 TDD
+  - Bug 修复 → 注入 systematic-debugging
+  - 纯配置文件修改 → 不注入任何方法论
+  - 不确定时询问用户"这个需求偏新功能还是修Bug？"再决定
 - 每个阶段派发子Agent时，**先检查 `$NO_SUPERPOWERS`**：如果为 `true`，则跳过方法论注入，只传递原始任务参数
 - 如果 `$NO_SUPERPOWERS` 不为 `true`，则在子Agent的 `prompt` 中，于原始任务描述**之前**插入对应的方法论指引块
 - 方法论指引块使用 `===== 🎯 来自 superpowers:<技能名> =====` 包裹，清晰标识来源
@@ -133,45 +140,101 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 | 🚀 部署 | DeepSeek Flash ⚡ | deepseek-v4-flash | ¥1+¥2/百万token |
 ```
 
-### 步骤2：运行规划Agent (wf-planner) — 使用 DeepSeek Pro 🧠
-
-1. 输出阶段信息：**🟢 阶段 1/8：规划阶段 - wf-planner → DeepSeek Pro 🧠**
-2. 使用 `task` 工具启动规划子Agent（模型：DeepSeek Pro，利用其强推理和thinking mode进行深度需求分析），传入完整的 prompt（包含方法论注入）：
+6. **初始化进度文件**：在项目根目录的 `docs/superpowers/plans/` 下创建或更新 `progress.md`。
+   **如果 `$LITE=true`**，使用不含架构评审和架构扫描的轻量版：
+   ```markdown
+   # 进度跟踪 - {项目名}
+   
+   | 阶段 | 状态 | 产出 |
+   |------|------|------|
+   | 📋 规划 | ⏳ 进行中 | 01-plan.md |
+   | 🏗️ 架构 | ⏳ 待开始 | 02-design.md |
+   | 💻 编码 | ⏳ 待开始 | 代码变更 |
+   | 🧪 测试 | ⏳ 待开始 | TEST_REPORT.md |
+   | 🔍 审查 | ⏳ 待开始 | 05-review.md |
+   | 🚀 部署 | ⏳ 待开始 | DEPLOY.md |
    ```
-   ===== 🎯 来自 superpowers:brainstorming =====
-   1. 先分析需求，不要直接写方案
-   2. 识别隐含假设和模糊点，列出开放问题
-   3. 输出设计规格，包含：功能需求、非功能需求、约束条件
-   4. 给用户 2-3 个可选方案对比
-
-   ===== 🎯 来自 superpowers:writing-plans =====
-   1. 将需求拆解为具体的实施步骤
-   2. 每步包含：任务描述、验收标准、产出物
-   3. 识别可并行执行的任务并标记
-   4. 每步设置检查点（checkpoint）
-   5. 估算每步的工作量
-
-   工作流目录: {SESSION_DIR}
-   需求描述: {需求描述}
+   **否则**使用完整版。如果还指定了 `--from`，之前阶段标记为 `✅ 已完成`：
+   ```markdown
+   # 进度跟踪 - {项目名}
+   
+   | 阶段 | 状态 | 产出 |
+   |------|------|------|
+   | 📋 规划 | ⏳ 进行中 | 01-plan.md |
+   | 🏗️ 架构 | ⏳ 待开始 | 02-design.md |
+   | 🏛️ 架构评审 | ⏳ 待开始 | 03-arch-review.md |
+   | 💻 编码 | ⏳ 待开始 | 代码变更 |
+   | 🧪 测试 | ⏳ 待开始 | TEST_REPORT.md |
+   | 🔬 架构扫描 | ⏳ 待开始 | 诊断报告 |
+   | 🔍 审查 | ⏳ 待开始 | 05-review.md |
+   | 🚀 部署 | ⏳ 待开始 | DEPLOY.md |
    ```
-   - 给子Agent适当宽松的 `max_steps`
-   - `model` 参数：如有 `--model` 全局覆盖则用指定值，否则默认 `deepseek/deepseek-v4-pro`
-3. 等待子Agent完成
-4. 验证 `{SESSION_DIR}/01-plan.md` 已生成
+   同时确保 `docs/superpowers/plans/findings.md` 存在，如果不存在则创建并写入头部：
+   ```markdown
+   # 发现记录 - {项目名}
+   
+   | 时间 | 阶段 | 发现 | 影响 |
+   |------|------|------|------|
+   ```
+   后续每个阶段追加格式保持 `| {时间} | {阶段名} | {发现摘要} | {影响说明} |`
+
+7. **检查基础设施**：
+   - 先解析 `--from` 参数：如果指定了起始阶段，直接将 `progress.md` 中该阶段之前的所有行标记为 `✅ 已完成`（不执行这些阶段）
+   - 检查 `task` 工具是否可用：尝试调用一个简单的 task，如果不可用则设置 `$FALLBACK=true` 标志
+   - 如果 `$FALLBACK=true`，后续所有子Agent阶段改为**单Agent顺序执行**（不使用 task，由编排器自行完成各阶段任务），并告知用户
+   - 记录检查结果到 `{SESSION_DIR}/checkpoint.json`
+
+8. **写入 checkpoint**：
+   ```json
+   {
+     "project": "{项目名}",
+     "session_dir": "{SESSION_DIR}",
+     "started_at": "{时间戳}",
+     "last_completed_phase": null,
+     "lite_mode": $LITE,
+     "fallback_mode": $FALLBACK
+   }
+   ```
+
+### 步骤2：规划阶段 — 交互式需求澄清（由编排器亲自完成）
+
+> **注意：** 本步骤不使用 `task` 子Agent。编排器直接在对话中与用户逐轮交互。
+
+1. 输出阶段信息：**🟢 阶段 1/8：规划阶段 - 编排器（交互模式）**
+2. **探索项目上下文**：检查项目已有文件结构、README、现有配置等
+3. **逐轮提问澄清需求**，遵循 brainstorming 核心原则：
+   - 每次只问一个问题
+   - 优先用选择题
+   - 重点了解：业务目的、用户角色、核心功能、约束条件、成功标准
+   - 用户提供截图/设计稿时，用 MCP 图片理解分析
+   - 边问边将出现的业务术语记入 `CONTEXT.md`
+4. 需求明确后，**提出 2-3 种方案**对比，给出推荐
+5. **分节展示设计**，每节展示后问用户是否确认
+6. **用户确认后**，编写设计规格到 `docs/superpowers/specs/YYYY-MM-DD-<project>-design.md`
+7. **编写实施计划**（调用 writing-plans 风格），写入 `{SESSION_DIR}/01-plan.md`
+8. 请用户审查计划，用户批准后才进入下一阶段
+9. **更新进度文件**：将 progress.md 中「📋 规划」行改为 `✅ 已完成`，在 findings.md 追加规划阶段摘要
+10. **写入 checkpoint**：更新 `{SESSION_DIR}/checkpoint.json` 中的 `last_completed_phase` 为 `"planning"`
 
 ### 步骤3：运行架构Agent (wf-architect) — 使用 DeepSeek Pro 🧠
 
 1. 输出阶段信息：**🟢 阶段 2/8：架构阶段 - wf-architect → DeepSeek Pro 🧠**
-2. 使用 `task` 工具启动架构子Agent（模型：DeepSeek Pro，复杂架构推演需要深度思考），传入：
+2. 如果 `$FALLBACK=true`，由编排器自行完成架构设计（不使用 task）：读取 `01-plan.md` 和领域模型，直接在当前对话完成架构设计并写入 `02-design.md`
+3. 否则，使用 `task` 工具启动架构子Agent（模型：DeepSeek Pro，复杂架构推演需要深度思考），传入：
    ```
    工作流目录: {SESSION_DIR}
    需求描述: {需求描述}
    ```
    - `model` 参数：`--model` 覆盖值，否则默认 `deepseek/deepseek-v4-pro`
-3. 等待子Agent完成
-4. 验证 `{SESSION_DIR}/02-design.md` 已生成
+   - `timeout` 参数：`--timeout` 值或默认300秒
+4. 等待子Agent完成
+5. 验证 `{SESSION_DIR}/02-design.md` 已生成
+6. **写入 checkpoint**：更新 `{SESSION_DIR}/checkpoint.json` 中的 `last_completed_phase` 为 `"architecture"`
+7. **更新进度文件**：将 progress.md 中「🏗️ 架构」行改为 `✅ 已完成`，在 findings.md 追加架构阶段发现
 
 ### 步骤4：运行架构评审 (reasonix-arch-review) — 使用 DeepSeek Pro 🧠
+
+> **`--lite` 模式跳过此步骤**：如果 `$LITE=true`，直接输出阶段为「⏭️ 已跳过」，跳转到步骤5
 
 1. 输出阶段信息：**🟢 阶段 3/8：架构评审 - reasonix-arch-review → DeepSeek Pro 🧠**
 2. 读取 `{SESSION_DIR}/02-design.md`，在 prompt 中注入 reasonix-arch-review 技能指引：
@@ -192,11 +255,14 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 5. 根据健康评分决定走向：
    - 🟢 或 🟡：继续进入开发阶段（🟡 时在开发 prompt 中附带待修复项）
    - 🔴：向用户报告严重问题，询问是否返回架构阶段重做
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch-review"`
+7. **更新进度文件**：将 progress.md 中「🏛️ 架构评审」行改为 `✅ 已完成`，在 findings.md 追加评审结论
 
 ### 步骤5：运行编码Agent (wf-developer) — 使用 DeepSeek Flash ⚡
 
 1. 输出阶段信息：**🟢 阶段 4/8：编码阶段 - wf-developer → DeepSeek Flash ⚡**
-2. 使用 `task` 工具启动编码子Agent（模型：DeepSeek Flash，deepseek-v4-flash 编码能力足够强且成本低），传入完整的 prompt（包含方法论注入）：
+2. 如果 `$FALLBACK=true`，由编排器自行完成编码（在当前对话中直接实现需求，不使用 task）
+3. 否则，使用 `task` 工具启动编码子Agent（模型：DeepSeek Flash），传入完整的 prompt（包含方法论注入）：
    ```
    ===== 🎯 来自 superpowers:test-driven-development =====
    如果是新功能开发，遵循严格 TDD：
@@ -216,14 +282,18 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    项目根目录: <项目在磁盘上的根目录路径>
    ```
    - `model` 参数：`--model` 覆盖值，否则默认 `deepseek/deepseek-v4-flash`
+   - `timeout` 参数：`--timeout` 值或默认600秒（编码阶段放宽）
    - 此阶段可能需要较多步骤（max_steps 适当放宽）
-3. 等待子Agent完成
-4. 验证 `{SESSION_DIR}/03-implementation/` 下是否有产出
+4. 等待子Agent完成
+5. 验证 `{SESSION_DIR}/03-implementation/` 下是否有产出
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"coding"`
+7. **更新进度文件**：将 progress.md 中「💻 编码」行改为 `✅ 已完成`，在 findings.md 追加编码阶段变更摘要
 
 ### 步骤6：运行测试Agent (wf-tester) — 使用 DeepSeek Flash ⚡
 
 1. 输出阶段信息：**🟢 阶段 5/8：测试阶段 - wf-tester → DeepSeek Flash ⚡**
-2. 使用 `task` 工具启动测试子Agent（模型：DeepSeek Flash，deepseek-v4-flash 分析测试足够），传入完整的 prompt（包含方法论注入）：
+2. 如果 `$FALLBACK=true`，由编排器自行完成测试（当前对话中分析代码、执行测试）
+3. 否则，使用 `task` 工具启动测试子Agent（模型：DeepSeek Flash），传入完整的 prompt（包含方法论注入）：
    ```
    ===== 🎯 来自 superpowers:dispatching-parallel-agents =====
    1. 分析测试用例，识别可独立执行的测试
@@ -235,10 +305,15 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    项目根目录: <项目在磁盘上的根目录路径>
    ```
    - `model` 参数：`--model` 覆盖值，否则默认 `deepseek/deepseek-v4-flash`
-3. 等待子Agent完成
-4. 验证 `{SESSION_DIR}/04-test/TEST_REPORT.md` 已生成
+   - `timeout` 参数：`--timeout` 值或默认300秒
+4. 等待子Agent完成
+5. 验证 `{SESSION_DIR}/04-test/TEST_REPORT.md` 已生成
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"testing"`
+7. **更新进度文件**：将 progress.md 中「🧪 测试」行改为 `✅ 已完成`，在 findings.md 追加测试结果（通过率）
 
 ### 步骤7：运行架构扫描 (reasonix-arch-review 用法二) — 使用 DeepSeek Pro 🧠
+
+> **`--lite` 模式跳过此步骤**：如果 `$LITE=true`，直接输出阶段为「⏭️ 已跳过」，跳转到步骤8
 
 1. 输出阶段信息：**🟢 阶段 6/8：架构扫描 - 代码架构诊断 → DeepSeek Pro 🧠**
 2. 注入 reasonix-arch-review 用法二（架构扫描）指引：
@@ -254,11 +329,14 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 3. 扫描代码结构并生成 HTML 报告
 4. 向用户展示报告，询问深入讨论哪个改进点
 5. 如用户选择改进点，引导到 domain-modeling 深化
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch-scan"`
+7. **更新进度文件**：将 progress.md 中「🔬 架构扫描」行改为 `✅ 已完成`，在 findings.md 追加扫描关键发现
 
 ### 步骤8：运行审查Agent (wf-reviewer) — 使用 DeepSeek Pro 🧠
 
 1. 输出阶段信息：**🟢 阶段 7/8：审查阶段 - wf-reviewer → DeepSeek Pro 🧠**
-2. 使用 `task` 工具启动审查子Agent（模型：DeepSeek Pro，深度推理能发现隐藏的代码问题），传入完整的 prompt（包含方法论注入）：
+2. 如果 `$FALLBACK=true`，由编排器自行完成代码审查
+3. 否则，使用 `task` 工具启动审查子Agent（模型：DeepSeek Pro），传入完整的 prompt（包含方法论注入）：
    ```
    ===== 🎯 来自 superpowers:requesting-code-review =====
    1. 逐文件检查代码质量
@@ -276,21 +354,28 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    项目根目录: <项目在磁盘上的根目录路径>
    ```
    - `model` 参数：`--model` 覆盖值，否则默认 `deepseek/deepseek-v4-pro`
-3. 等待子Agent完成
-4. 验证 `{SESSION_DIR}/05-review.md` 已生成
+   - `timeout` 参数：`--timeout` 值或默认300秒
+4. 等待子Agent完成
+5. 验证 `{SESSION_DIR}/05-review.md` 已生成
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"review"`
+7. **更新进度文件**：将 progress.md 中「🔍 审查」行改为 `✅ 已完成`，在 findings.md 追加审查结论
 
 ### 步骤9：运行部署Agent (wf-deployer) — 使用 DeepSeek Flash ⚡
 
 1. 输出阶段信息：**🟢 阶段 8/8：部署阶段 - wf-deployer → DeepSeek Flash ⚡**
-2. 使用 `task` 工具启动部署子Agent（模型：DeepSeek Flash，流程性任务 flash 够用），传入：
+2. 如果 `$FALLBACK=true`，由编排器自行完成部署方案
+3. 否则，使用 `task` 工具启动部署子Agent（模型：DeepSeek Flash），传入：
    ```
    工作流目录: {SESSION_DIR}
    项目根目录: <项目在磁盘上的根目录路径>
    部署目标: development
    ```
    - `model` 参数：`--model` 覆盖值，否则默认 `deepseek/deepseek-v4-flash`
-3. 等待子Agent完成
-4. 验证 `{SESSION_DIR}/06-deploy/DEPLOY.md` 已生成
+   - `timeout` 参数：`--timeout` 值或默认300秒
+4. 等待子Agent完成
+5. 验证 `{SESSION_DIR}/06-deploy/DEPLOY.md` 已生成
+6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"deploy"`
+7. **更新进度文件**：将 progress.md 中「🚀 部署」行改为 `✅ 已完成`，在 findings.md 追加部署结果
 
 ### 步骤10：生成会话总结并展示
 
@@ -318,6 +403,20 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 | 🔍 审查 | DeepSeek Pro 🧠 | deepseek-v4-pro | 05-review.md |
 | 🚀 部署 | DeepSeek Flash ⚡ | deepseek-v4-flash | DEPLOY.md |
 
+## 成本统计
+- 各阶段 token 消耗估算（基于模型定价）：
+  | 阶段 | 模型 | 输入/百万token | 输出/百万token | 状态 |
+  |------|------|---------------|---------------|------|
+  | 📋 规划 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
+  | 🏗️ 架构 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
+  | 🏛️ 架构评审 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
+  | 💻 编码 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
+  | 🧪 测试 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
+  | 🔬 架构扫描 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
+  | 🔍 审查 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
+  | 🚀 部署 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
+- 关于 token 精确计费请查看模型提供商定价页
+
 ### 📋 规划阶段（DeepSeek Pro 🧠 deepseek-v4-pro）
 {plan 核心结论概要}
 
@@ -338,7 +437,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 - 测试用例：{N} 个
 - 通过率：{X%}
 
-### 🔍 审查阶段（DeepSeek Flash 🔍 deepseek-v4-flash）
+### 🔍 审查阶段（DeepSeek Pro 🧠 deepseek-v4-pro）
 - 总体评价：{通过/有条件通过/需修改}
 
 ### 🚀 部署阶段（DeepSeek Flash ⚡ deepseek-v4-flash）
@@ -358,9 +457,15 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 ## 错误处理
 
-- **子Agent调用失败**：记录错误到 `{SESSION_DIR}/ERRORS.log`，询问用户是否继续或中止
+- **子Agent调用失败**：如果 task 工具调用超时或报错，记录错误到 `{SESSION_DIR}/ERRORS.log`，记录当前 `last_completed_phase` 到 checkpoint，询问用户：
+  - 重试该阶段（使用剩余时间）
+  - 切换到单Agent顺序模式（$FALLBACK=true）
+  - 跳过该阶段继续
+  - 中止工作流
 - **某个阶段产出验证失败**：提示用户缺失的文件，提供选项：重试该阶段或跳过
+- **某个阶段失败或跳过**：将 progress.md 中对应阶段状态改为 `❌ 失败` 或 `⏭️ 已跳过`，更新 findings.md 记录失败原因
 - **构建失败**：记录错误详情，给出可能的修复建议
+- **会话中断恢复**：如果检测到 `checkpoint.json` 存在，从中读取 `last_completed_phase` 和 `session_dir`，从该阶段后继续执行
 
 ## 重要原则
 

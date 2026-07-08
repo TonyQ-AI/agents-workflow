@@ -20,6 +20,7 @@ runAs: subagent
 - `{工作流目录}/02-design.md`（架构Agent产出）
 - `{工作流目录}/03-implementation/CHANGES.md`（编码Agent产出）
 - `{工作流目录}/04-test/TEST_REPORT.md`（测试Agent产出）
+- `docs/superpowers/plans/findings.md`（架构扫描发现和知识沉淀）
 
 ## 你的任务
 
