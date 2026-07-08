@@ -628,3 +628,30 @@ ${WORKSPACE}\
         ├── checkpoint.json
         └── ERRORS.log
 ```
+
+---
+
+## 独立工具：YAML 工作流执行器（workflow-runner）
+
+除了预制的 13 阶段开发流水线（wf-orchestrator），本工作流还包含一个通用 YAML 工作流执行器。
+
+### 定位
+
+`workflow-runner` 是一个**通用引擎**，可以读取任意 `.yaml` 文件定义的多角色协作工作流，在当前会话中依次扮演每个角色完成任务。无需额外 API key，当前 LLM 就是执行引擎。
+
+### 使用场景
+
+- 用户提供了一个 `.yaml` 工作流文件
+- 需要多角色协作完成非开发任务（如 PRD 评审、方案评估、头脑风暴）
+- 想要自定义工作流但不修改 wf-orchestrator
+
+### 与 wf-orchestrator 的关系
+
+| | wf-orchestrator | workflow-runner |
+|:--|:---------------|:----------------|
+| 定位 | 软件开发专用流水线 | 通用多角色工作流引擎 |
+| 输入 | `/wf-orchestrator 项目名: 需求` | `/workflow-runner 工作流.yaml` |
+| 角色 | 固定 7 个子 Agent | YAML 定义的任意角色 |
+| 适用 | 编码/测试/部署等开发任务 | 评审/创作/分析等任意协作任务 |
+
+详见 `skills/workflow-runner/SKILL.md`。

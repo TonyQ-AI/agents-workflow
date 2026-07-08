@@ -230,6 +230,44 @@ workflow/20260709_143000_新增批量导出/
 
 ---
 
+
+## 独立 YAML 工作流执行器
+
+除了预制的 13 阶段开发流水线，还包含一个**通用 YAML 工作流执行器**（`workflow-runner`），支持运行任意自定义的多角色协作工作流。
+
+### 与 wf-orchestrator 的区别
+
+| | wf-orchestrator | workflow-runner |
+|:--|:---------------|:----------------|
+| 定位 | 预制的开发流水线 | 通用的工作流引擎 |
+| 输入 | 一句话需求描述 | 一个 `.yaml` 工作流文件 |
+| 阶段 | 固定的 13 阶段 | YAML 定义什么就跑什么 |
+| 角色 | 固定的 7 个子 Agent | 任意自定义角色 |
+
+### 使用方式
+
+```bash
+# 运行自定义 YAML 工作流
+/workflow-runner workflows/story-creation.yaml
+
+# YAML 示例结构
+name: "故事创作工作流"
+steps:
+  - id: brainstorm
+    role: "product/brainstormer"
+    task: "根据主题生成 3 个故事创意"
+  - id: review
+    role: "editor/reviewer"
+    task: "评审创意并选出最佳方案"
+    depends_on: [brainstorm]
+
+# 也适用于：PRD 评审、技术方案评估、多角色头脑风暴等
+```
+
+详见 `skills/workflow-runner/SKILL.md`。
+
+---
+
 ## 完整文档
 
 详见 [WORKFLOW_MANUAL.md](WORKFLOW_MANUAL.md) — 完整的13阶段执行说明、防幻觉机制、中断恢复、会话交接。
