@@ -483,6 +483,8 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 5. **分节展示设计**，每节展示后问用户是否确认
 
 6. **用户确认后**，编写设计规格到 `docs/superpowers/specs/YYYY-MM-DD-<project>-design.md`
+   - 此文件作为**用户确认的原始需求基准**（Single Source of Truth）
+   - 后续所有阶段都必须对照此文件交叉验证，防止需求漂移
 
 7. **编写实施计划**（调用 writing-plans 风格），写入 `{SESSION_DIR}/01-plan.md`
 
@@ -502,7 +504,8 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 1. 输出阶段信息：**🟢 阶段 2/13：领域建模 - reasonix-domain-modeling → DeepSeek Pro 🧠**
 
-2. 读取规划阶段产出的设计规格 `docs/superpowers/specs/YYYY-MM-DD-<project>-design.md`
+2. 读取规划阶段产出的设计规格 `{SPECS_PATH}`（用户确认的原始需求基准）
+   - 交叉验证：提取的领域概念是否与需求规格一致？有无遗漏？ `docs/superpowers/specs/YYYY-MM-DD-<project>-design.md`
 
 3. 注入 reasonix-domain-modeling 方法论：
 
