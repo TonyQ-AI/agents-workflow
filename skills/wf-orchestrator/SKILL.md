@@ -467,7 +467,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 10. **更新进度文件**：将 progress.md 中「📋 规划」行改为 `✅ 已完成`，在 findings.md 追加规划阶段摘要
 
-10. **写入 checkpoint**：更新 `{SESSION_DIR}/checkpoint.json` 中的 `last_completed_phase` 为 `"planning"`
+11. **写入 checkpoint**：更新 `{SESSION_DIR}/checkpoint.json` 中的 `last_completed_phase` 为 `"planning"`
 
 
 
@@ -893,9 +893,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 ### 步骤14：生成会话总结并展示
 
 1. 输出阶段信息：**🟢 阶段 13/13：总结阶段 - 编排器**
-1. 读取各阶段的产出摘要
+2. 读取各阶段的产出摘要
 
-2. 写入 `{SESSION_DIR}/SUMMARY.md`：
+3. 写入 `{SESSION_DIR}/SUMMARY.md`：
 
 
 
@@ -940,6 +940,12 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 | 🔍 审查 | DeepSeek Pro 🧠 | deepseek-v4-pro | 05-review.md |
 
 | 🚀 部署 | DeepSeek Flash ⚡ | deepseek-v4-flash | DEPLOY.md |
+
+| 📖 文档检查 | DeepSeek Flash ⚡ | deepseek-v4-flash | 文档报告 |
+
+| 🌿 分支收尾 | DeepSeek Flash ⚡ | deepseek-v4-flash | git 提交+PR |
+
+| 📊 版本登记 | DeepSeek Flash ⚡ | deepseek-v4-flash | 版本记录 |
 
 
 
