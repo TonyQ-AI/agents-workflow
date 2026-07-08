@@ -674,6 +674,11 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    - 简单任务（<=3 个独立模块）：单个 `task(wf-developer)` 执行
    - 复杂任务（>3 个独立模块，如前端+后端+数据库）：按模块拆分为多个并行子任务，完成后统一审查
 
+   **UI 设计注入**：若 `$HAS_UI=true`，注入 `reasonix-ui-design`：
+   ===== 🎯 来自 superpowers:reasonix-ui-design =====
+   遵循设计令牌体系，避免 AI 模板化设计，组件命名遵循项目规范
+   ===== 🎯 end =====
+
    ===== 🎯 来自 superpowers:test-driven-development =====
 
    如果是新功能开发，遵循严格 TDD：
@@ -1102,16 +1107,16 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 ## 产出物
 
 - 规划文档：01-plan.md
-
+- 领域模型：domain-model.md
 - 架构设计：02-design.md
-
+- 架构评审：03-arch-review.md
 - 代码变更：03-implementation/CHANGES.md
-
 - 测试报告：04-test/TEST_REPORT.md
-
+- 架构扫描报告：architecture-scan.html
 - 审查报告：05-review.md
-
 - 部署方案：06-deploy/DEPLOY.md
+- 文档检查报告：doc-check-report.md
+- 版本记录：.vt.json
 
 ```
 
