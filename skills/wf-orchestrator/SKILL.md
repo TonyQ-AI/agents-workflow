@@ -90,7 +90,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 | 💻 编码 (wf-developer) | test-driven-development / systematic-debugging | 严格TDD或系统化调试 |
 | 🧪 测试 (wf-tester) | dispatching-parallel-agents | 并行执行独立测试 |
 | 🔬 **架构扫描 (arch-scan)** | **reasonix-arch-review（用法二）** | **编码后扫描真实代码，诊断架构腐化** |
-| 🔍 审查 (wf-reviewer) | requesting-code-review + chinese-code-review | 结合中文审查风格 |
+| 🔍 审查 (wf-reviewer) | requesting-code-review + receiving-code-review + chinese-code-review | 审查 + 接收反馈 + 中文风格 |
 | 🚀 部署 (wf-deployer) | （无） | — |
 | 🔄 **全阶段可用** | **reasonix-handoff** | **随时交接对话上下文给另一个 AI/开发者** |
 
@@ -148,6 +148,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    | 阶段 | 状态 | 产出 |
    |------|------|------|
    | 📋 规划 | ⏳ 进行中 | 01-plan.md |
+   | 🧩 领域建模 | ⏳ 待开始 | 领域模型 |
    | 🏗️ 架构 | ⏳ 待开始 | 02-design.md |
    | 💻 编码 | ⏳ 待开始 | 代码变更 |
    | 🧪 测试 | ⏳ 待开始 | TEST_REPORT.md |
@@ -161,6 +162,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    | 阶段 | 状态 | 产出 |
    |------|------|------|
    | 📋 规划 | ⏳ 进行中 | 01-plan.md |
+   | 🧩 领域建模 | ⏳ 待开始 | 领域模型 |
    | 🏗️ 架构 | ⏳ 待开始 | 02-design.md |
    | 🏛️ 架构评审 | ⏳ 待开始 | 03-arch-review.md |
    | 💻 编码 | ⏳ 待开始 | 代码变更 |
@@ -216,9 +218,29 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 9. **更新进度文件**：将 progress.md 中「📋 规划」行改为 `✅ 已完成`，在 findings.md 追加规划阶段摘要
 10. **写入 checkpoint**：更新 `{SESSION_DIR}/checkpoint.json` 中的 `last_completed_phase` 为 `"planning"`
 
-### 步骤3：运行架构Agent (wf-architect) — 使用 DeepSeek Pro 🧠
+### 步骤3：领域建模 — 提取领域概念与实体关系（使用 DeepSeek Pro 🧠）
 
-1. 输出阶段信息：**🟢 阶段 2/8：架构阶段 - wf-architect → DeepSeek Pro 🧠**
+1. 输出阶段信息：**🟢 阶段 2/9：领域建模 - reasonix-domain-modeling → DeepSeek Pro 🧠**
+2. 读取规划阶段产出的设计规格 `docs/superpowers/specs/YYYY-MM-DD-<project>-design.md`
+3. 注入 reasonix-domain-modeling 方法论：
+   ```
+   ===== 🎯 来自 reasonix:reasonix-domain-modeling =====
+   1. 从设计规格中提取核心领域概念
+   2. 定义实体、值对象、聚合根
+   3. 建立实体之间的关系（1:1、1:N、N:M）
+   4. 建立通用语言（Ubiquitous Language），更新 CONTEXT.md
+   5. 记录架构决策到 docs/adr/（如有重要技术选型）
+   ```
+4. 如果 `$FALLBACK=true`，编排器自行完成领域建模
+5. 否则使用 `task` 子Agent执行（模型：DeepSeek Pro，领域抽象需要深度思考）
+6. 将领域模型写入 `docs/superpowers/domain-models/YYYY-MM-DD-<project>-domain.md`
+7. 同步更新 `CONTEXT.md`（通用语言）
+8. **写入 checkpoint**：更新 `last_completed_phase` 为 `"domain-modeling"`
+9. **更新进度文件**：将 progress.md 中「🧩 领域建模」行改为 `✅ 已完成`，在 findings.md 追加领域模型摘要
+
+### 步骤4：运行架构Agent (wf-architect) — 使用 DeepSeek Pro 🧠
+
+1. 输出阶段信息：**🟢 阶段 3/9：架构阶段 - wf-architect → DeepSeek Pro 🧠**
 2. 如果 `$FALLBACK=true`，由编排器自行完成架构设计（不使用 task）：读取 `01-plan.md` 和领域模型，直接在当前对话完成架构设计并写入 `02-design.md`
 3. 否则，使用 `task` 工具启动架构子Agent（模型：DeepSeek Pro，复杂架构推演需要深度思考），传入：
    ```
@@ -232,11 +254,11 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 6. **写入 checkpoint**：更新 `{SESSION_DIR}/checkpoint.json` 中的 `last_completed_phase` 为 `"architecture"`
 7. **更新进度文件**：将 progress.md 中「🏗️ 架构」行改为 `✅ 已完成`，在 findings.md 追加架构阶段发现
 
-### 步骤4：运行架构评审 (reasonix-arch-review) — 使用 DeepSeek Pro 🧠
+### 步骤5：运行架构评审 (reasonix-arch-review) — 使用 DeepSeek Pro 🧠
 
 > **`--lite` 模式跳过此步骤**：如果 `$LITE=true`，直接输出阶段为「⏭️ 已跳过」，跳转到步骤5
 
-1. 输出阶段信息：**🟢 阶段 3/8：架构评审 - reasonix-arch-review → DeepSeek Pro 🧠**
+1. 输出阶段信息：**🟢 阶段 4/9：架构评审 - reasonix-arch-review → DeepSeek Pro 🧠**
 2. 读取 `{SESSION_DIR}/02-design.md`，在 prompt 中注入 reasonix-arch-review 技能指引：
    ```
    ===== 🎯 来自 reasonix:reasonix-arch-review =====
@@ -258,9 +280,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch-review"`
 7. **更新进度文件**：将 progress.md 中「🏛️ 架构评审」行改为 `✅ 已完成`，在 findings.md 追加评审结论
 
-### 步骤5：运行编码Agent (wf-developer) — 使用 DeepSeek Flash ⚡
+### 步骤6：运行编码Agent (wf-developer) — 使用 DeepSeek Flash ⚡
 
-1. 输出阶段信息：**🟢 阶段 4/8：编码阶段 - wf-developer → DeepSeek Flash ⚡**
+1. 输出阶段信息：**🟢 阶段 5/9：编码阶段 - wf-developer → DeepSeek Flash ⚡**
 2. 如果 `$FALLBACK=true`，由编排器自行完成编码（在当前对话中直接实现需求，不使用 task）
 3. 否则，使用 `task` 工具启动编码子Agent（模型：DeepSeek Flash），传入完整的 prompt（包含方法论注入）：
    ```
@@ -289,9 +311,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"coding"`
 7. **更新进度文件**：将 progress.md 中「💻 编码」行改为 `✅ 已完成`，在 findings.md 追加编码阶段变更摘要
 
-### 步骤6：运行测试Agent (wf-tester) — 使用 DeepSeek Flash ⚡
+### 步骤7：运行测试Agent (wf-tester) — 使用 DeepSeek Flash ⚡
 
-1. 输出阶段信息：**🟢 阶段 5/8：测试阶段 - wf-tester → DeepSeek Flash ⚡**
+1. 输出阶段信息：**🟢 阶段 6/9：测试阶段 - wf-tester → DeepSeek Flash ⚡**
 2. 如果 `$FALLBACK=true`，由编排器自行完成测试（当前对话中分析代码、执行测试）
 3. 否则，使用 `task` 工具启动测试子Agent（模型：DeepSeek Flash），传入完整的 prompt（包含方法论注入）：
    ```
@@ -311,11 +333,11 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"testing"`
 7. **更新进度文件**：将 progress.md 中「🧪 测试」行改为 `✅ 已完成`，在 findings.md 追加测试结果（通过率）
 
-### 步骤7：运行架构扫描 (reasonix-arch-review 用法二) — 使用 DeepSeek Pro 🧠
+### 步骤8：运行架构扫描 (reasonix-arch-review 用法二) — 使用 DeepSeek Pro 🧠
 
 > **`--lite` 模式跳过此步骤**：如果 `$LITE=true`，直接输出阶段为「⏭️ 已跳过」，跳转到步骤8
 
-1. 输出阶段信息：**🟢 阶段 6/8：架构扫描 - 代码架构诊断 → DeepSeek Pro 🧠**
+1. 输出阶段信息：**🟢 阶段 7/9：架构扫描 - 代码架构诊断 → DeepSeek Pro 🧠**
 2. 注入 reasonix-arch-review 用法二（架构扫描）指引：
    ```
    ===== 🎯 来自 reasonix:reasonix-arch-review（用法二） =====
@@ -332,9 +354,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"arch-scan"`
 7. **更新进度文件**：将 progress.md 中「🔬 架构扫描」行改为 `✅ 已完成`，在 findings.md 追加扫描关键发现
 
-### 步骤8：运行审查Agent (wf-reviewer) — 使用 DeepSeek Pro 🧠
+### 步骤9：运行审查Agent (wf-reviewer) — 使用 DeepSeek Pro 🧠
 
-1. 输出阶段信息：**🟢 阶段 7/8：审查阶段 - wf-reviewer → DeepSeek Pro 🧠**
+1. 输出阶段信息：**🟢 阶段 8/9：审查阶段 - wf-reviewer → DeepSeek Pro 🧠**
 2. 如果 `$FALLBACK=true`，由编排器自行完成代码审查
 3. 否则，使用 `task` 工具启动审查子Agent（模型：DeepSeek Pro），传入完整的 prompt（包含方法论注入）：
    ```
@@ -343,6 +365,12 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
    2. 标出问题位置（文件:行号）
    3. 按严重程度分类：严重/一般/建议
    4. 给出每个问题的改进建议代码
+
+   ===== 🎯 来自 superpowers:receiving-code-review =====
+   收到审查反馈后，在修改之前先做以下动作：
+   1. 理解反馈的真实意图，不要机械照改
+   2. 对不明确或有疑问的反馈，先问清楚再改
+   3. 确认改动不会引入新问题
 
    ===== 🎯 来自 superpowers:chinese-code-review =====
    1. 符合国内团队沟通风格：建设性语言，避免直来直去
@@ -360,9 +388,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"review"`
 7. **更新进度文件**：将 progress.md 中「🔍 审查」行改为 `✅ 已完成`，在 findings.md 追加审查结论
 
-### 步骤9：运行部署Agent (wf-deployer) — 使用 DeepSeek Flash ⚡
+### 步骤10：运行部署Agent (wf-deployer) — 使用 DeepSeek Flash ⚡
 
-1. 输出阶段信息：**🟢 阶段 8/8：部署阶段 - wf-deployer → DeepSeek Flash ⚡**
+1. 输出阶段信息：**🟢 阶段 9/9：部署阶段 - wf-deployer → DeepSeek Flash ⚡**
 2. 如果 `$FALLBACK=true`，由编排器自行完成部署方案
 3. 否则，使用 `task` 工具启动部署子Agent（模型：DeepSeek Flash），传入：
    ```
@@ -377,7 +405,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 6. **写入 checkpoint**：更新 `last_completed_phase` 为 `"deploy"`
 7. **更新进度文件**：将 progress.md 中「🚀 部署」行改为 `✅ 已完成`，在 findings.md 追加部署结果
 
-### 步骤10：生成会话总结并展示
+### 步骤11：生成会话总结并展示
 
 1. 读取各阶段的产出摘要
 2. 写入 `{SESSION_DIR}/SUMMARY.md`：
