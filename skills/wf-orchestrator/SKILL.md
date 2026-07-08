@@ -258,6 +258,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
   断点位置：任务 N / 步骤 M
 
   之前的发现：<findings.md 摘要>
+   项目知识库：<KNOWLEDGE.md 中与当前任务相关的内容（若存在）>
 
   =====
 
@@ -1127,7 +1128,34 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
 
 
 3. 在回复中向用户呈现完整的执行总结，包含各阶段核心产出和下一步建议
-4. **reasonix-handoff 提示**：如果用户需要换会话继续，告知可使用 reasonix-handoff 技能交接上下文
+4. **知识沉淀**（参考 knowledge deposition 模式）：
+   - 阅读 `{SESSION_DIR}/findings.md`，提炼本次会话的关键发现
+   - 阅读各阶段产出和审查结论
+   - 确保 `docs/superpowers/knowledge/` 目录存在
+   - 向 `{KNOWLEDGE_PATH}` 追加以下内容：
+
+     ```
+     ## 📝 会话: {YYYY-MM-DD} — {需求概要}
+     
+     ### 🔑 关键决策
+     - {技术选型、架构决策及其理由}
+     
+     ### 💡 经验教训
+     - {什么做得好、什么踩了坑、下次该怎么做}
+     
+     ### 🧩 领域知识
+     - {领域模型更新、术语变更、业务规则发现}
+     
+     ### ⚠️ 注意事项
+     - {审查中发现的常见问题、安全注意事项}
+     
+     ### 📊 数据洞察
+     - {性能测试结果、成本分析、关键指标}
+     ```
+
+   - 若 `{KNOWLEDGE_PATH}` 首次创建，在此之前写入文件头
+
+5. **reasonix-handoff 提示**：如果用户需要换会话继续，告知可使用 reasonix-handoff 技能交接上下文
 
 
 
