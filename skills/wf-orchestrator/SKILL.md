@@ -1031,6 +1031,7 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
   |------|------|---------------|---------------|------|
 
   | 📋 规划 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
+  | 🧩 领域建模 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
 
   | 🏗️ 架构 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
 
@@ -1045,6 +1046,9 @@ MediaManager: 重构用户模块 --model deepseek   ← 全部用DeepSeek
   | 🔍 审查 | deepseek-v4-pro | ¥3 | ¥6 | ✅ |
 
   | 🚀 部署 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
+  | 📖 文档检查 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
+  | 🌿 分支收尾 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
+  | 📊 版本登记 | deepseek-v4-flash | ¥1 | ¥2 | ✅ |
 
 - 关于 token 精确计费请查看模型提供商定价页
 
