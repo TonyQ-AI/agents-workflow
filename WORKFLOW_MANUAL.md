@@ -574,7 +574,7 @@ lite 模式: 规划 → 领域 → 架构 → [跳过] → 编码 → 测试 →
 
 ### 环境变量
 
-在 `F:\ReasonixTest\.env` 中配置：
+在 `${REASONIX_HOME}\.env` 中配置：
 
 ```env
 DEEPSEEK_API_KEY=sk-xxx
@@ -584,7 +584,7 @@ BAIDU_OCR_API_KEY=bce-v3/xxx
 
 ### reasonix.toml
 
-在 `F:\projects\reasonix.toml` 中配置：
+在 `${WORKSPACE}\reasonix.toml` 中配置：
 
 ```toml
 [sandbox]
@@ -602,7 +602,7 @@ env     = { MIMO_API_KEY = "${MIMO_API_KEY}" }
 ### 文件结构
 
 ```
-F:\projects\
+${WORKSPACE}\
 ├── .reasonix\skills\         ← 36 个技能
 ├── reasonix.toml             ← MCP + sandbox 配置
 ├── AGENTS.md                 ← 进度检查兜底规则

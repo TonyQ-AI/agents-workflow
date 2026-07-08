@@ -30,7 +30,7 @@ description: 多Agent协同开发主编排器：一键启动全流程开发
 
 可选参数（追加在末尾）：
 
-- `--from <阶段>`：从指定阶段开始（plan/domain/arch/arch-review/dev/test/arch-scan/review/deploy/doc-check/branch-finish/version-tracking）
+- `--from <阶段>`：从指定阶段开始（planning/domain-modeling/architecture/arch-review/coding/testing/arch-scan/review/deploy/doc-check/branch-finish/version-tracking）
 
 - `--to <阶段>`：在指定阶段结束（同上）
 
