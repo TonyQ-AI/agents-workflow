@@ -655,3 +655,17 @@ ${WORKSPACE}\
 | 适用 | 编码/测试/部署等开发任务 | 评审/创作/分析等任意协作任务 |
 
 详见 `skills/workflow-runner/SKILL.md`。
+
+---
+
+## 百度 OCR 双模式调用
+
+百度 Unlimited-OCR 支持两种调用方式，按工具能力自动选择：
+
+| 模式 | 传输方式 | 适用工具 | 配置 |
+|:-----|:--------|:---------|:-----|
+| **MCP SSE** | Server-Sent Events | Reasonix、ZCode | `type = "http"` 插件 |
+| **REST API** | HTTP POST + Base64 | AutoClaw、Cursor 等 | `BAIDU_OCR_API_KEY` + `BAIDU_OCR_SECRET_KEY` |
+
+调用时自动检测 MCP SSE 能力 → 有则用 SSE，无则 fallback REST API。
+详细调用示例见 `skills/baidu-unlimited-ocr/SKILL.md`。
