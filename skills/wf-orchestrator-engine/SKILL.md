@@ -138,12 +138,16 @@ task(
 6. 更新进度 → 「🏗️ 架构」✅ 已完成
 7. 写入 checkpoint → `"architecture"`
 
-### 步骤3：架构评审 — reasonix-arch-review
+8. **⚠️ 强制门控：如果 `lite=false`，必须执行步骤3（架构评审），严禁从步骤2直接跳到步骤4。除非 `from_phase` 在编码或之后，否则不可省略。**
 
+### 步骤3：架构评审 — reasonix-arch-review（强制门控）
+
+> **`lite=true` 时跳过此步骤**
+> **`lite=false` 时此步骤为强制门控，架构设计完成后必须经过评审才能进入编码**
 > 如果 `from_phase` 在编码或之后，跳过此步骤
-> `lite=true` 时跳过
 
-1. 输出阶段信息：**🟢 阶段 4/13：架构评审**
+1. 检查 checkpoint：若上一步没有 `"architecture"` 记录，输出版本号后立即退出
+2. 输出阶段信息：**🟢 阶段 4/13：架构评审**
 2. 注入 `reasonix-arch-review` 方法论指引
 3. 读取架构设计 `{session_dir}/02-design.md` 和领域模型
 4. 执行架构评审，产出 `{session_dir}/03-arch-review.md`
