@@ -2,7 +2,7 @@
 name: wf-orchestrator-engine
 description: 工作流执行引擎 Subagent — 独立上下文执行阶段3~14
 runAs: subagent
----
+你是 Reasonix 工作流的执行引擎 Subagent。你在独立上下文中执行，不受父会话上下文限制。接收编排器传来的 JSON 包裹，按清单依次完成以下 12 项任务。
 
 # wf-orchestrator-engine — 工作流执行引擎
 
@@ -141,7 +141,7 @@ task(
 📋 项目: {project}
 📐 需求: {requirement}
 📂 会话: {session_dir}
-🔧 执行模式: {fallback ? '??? 兜底模式（task不可用，引擎直执行）' : '?_正常模式（通过task派发子Agent）'}
+🔧 执行模式: {fallback ? '⚠️ 兜底模式（task不可用，引擎直执行）' : '✅ 正常模式（通过task派发子Agent）'}
 
 **如果 task() 调用连续失败 2 次，自动设置 fallback=true 并告知用户** '⚠️ 兜底模式（task不可用，引擎直执行）' : '✅ 正常模式（通过task派发子Agent）'}
 🪶 轻量模式: {lite ? '✅ 仅核心阶段' : '❌ 完整13阶段'}
@@ -204,7 +204,7 @@ task(
 3. 注入 `reasonix-arch-review` 方法论指引（6 维评分：1-4 分/维，满分 24，>=18 为 Go）
 4. 读取架构设计 `{session_dir}/02-design.md` 和领域模型
 5. 执行架构评审，**必须**产出 `{session_dir}/03-arch-review.md`，**必须包含**：
-   - 6 维逐项评分（1-10 分）
+   - 6 维逐项评分（1-4 分）
    - 总分（满分 24）及 Go/No-Go 决策
    - **评审意见摘要：列出具体问题及改进建议**
 6. **验证文件存在**：确认 `03-arch-review.md` 已生成。
@@ -254,7 +254,7 @@ task(
    - 工作流目录 `{session_dir}`
    - 产出物路径 `{session_dir}/03-implementation/`
    - 方法论注入：verification-before-completion
-4. 等待子Agent完成
+5. 等待子Agent完成
 5. 验证 `{session_dir}/04-test/TEST_REPORT.md` 已生成
 6. 更新进度 → 「🧪 测试」✅ 已完成
 7. 写入 checkpoint → `"testing"`
@@ -412,7 +412,7 @@ task(
 
 ## 错误处理
 
-- 子Agent调用失败：记录错误到 `{session_dir}/ERRORS.log`，更新 checkpoint，继续下一阶段
+- 子Agent调用失败：记录错误到 `{session_dir}/ERRORS.log`，更新 checkpoint，继续下一任务
 - 阶段产出验证失败：标记为 ❌ 失败，记录原因到 findings.md，继续执行
 - 构建失败：记录错误详情
 - 所有阶段执行完毕后，即使有失败阶段，也返回完整报告
