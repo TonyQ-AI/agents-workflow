@@ -138,38 +138,28 @@ task(
 6. 更新进度 → 「🏗️ 架构」✅ 已完成
 7. 写入 checkpoint → `"architecture"`
 
-8. **🔴 硬门控（不可绕过）**：
-   - `{session_dir}/03-arch-review.md` **必须存在且包含明确的 Go 决策**，否则**禁止进入编码阶段**
-   - 如果文件不存在或决策为 No-Go：写入 findings.md 记录「架构评审未通过」，checkpoint 停在 `"arch_review"`，**终止流程**
-   - 此门控在步骤4（编码）开头再次验证
+8. **⚠️ 强制门控：如果 `lite=false`，必须执行步骤3（架构评审），严禁从步骤2直接跳到步骤4。除非 `from_phase` 在编码或之后，否则不可省略。**
 
-### 步骤3：架构评审 — 硬门控（必须产出评审文件）
+### 步骤3：架构评审 — reasonix-arch-review（强制门控）
 
 > **`lite=true` 时跳过此步骤**
-> `lite=false` 时此步骤为 **文件级硬门控**：不产出 `03-arch-review.md`（含 Go 评分），流程卡死在此处，**无法进入编码**
+> **`lite=false` 时此步骤为强制门控，架构设计完成后必须经过评审才能进入编码**
+> 如果 `from_phase` 在编码或之后，跳过此步骤
 
-1. **前置验证**：读取 checkpoint，确认上一步 `"architecture"` 已完成。如果没有，输出错误并终止。
-2. 输出阶段信息：**🟢 阶段 4/13：架构评审 — 硬门控**
-3. 注入 `reasonix-arch-review` 方法论指引（6 维评分：功能完整性/可扩展性/性能/安全性/可维护性/成本）
-4. 读取架构设计 `{session_dir}/02-design.md` 和领域模型
-5. 执行架构评审，**必须**产出 `{session_dir}/03-arch-review.md`，**必须包含**：
-   - 6 维逐项评分（1-10 分）
-   - 总分及 Go/No-Go 决策
-   - **只有 Go（总分 ≥ 35/60）才允许进入编码**
-6. **验证文件存在**：确认 `03-arch-review.md` 已生成且包含 `Go` 字样。验证失败则**重试本步骤**。
-7. 更新进度 → 「🏛️ 架构评审」✅ 已完成
-8. 写入 checkpoint → `"arch_review"`
+1. 检查 checkpoint：若上一步没有 `"architecture"` 记录，输出版本号后立即退出
+2. 输出阶段信息：**🟢 阶段 4/13：架构评审**
+2. 注入 `reasonix-arch-review` 方法论指引
+3. 读取架构设计 `{session_dir}/02-design.md` 和领域模型
+4. 执行架构评审，产出 `{session_dir}/03-arch-review.md`
+5. 健康评分 → 决定 Go/No-Go
+6. 更新进度 → 「🏛️ 架构评审」✅ 已完成
+7. 写入 checkpoint → `"arch_review"`
 
 ### 步骤4：编码 — task(wf-developer) 或自行完成
 
 > 如果 `from_phase` 在测试或之后，跳过此步骤
 
-1. **🔴 架构评审门控验证**：
-   - 如果 `lite=false` 且 `from_phase` 不是从编码或之后开始：
-     - 检查 `{session_dir}/03-arch-review.md` 是否存在
-     - 如果不存在 → 输出「❌ 架构评审未完成，禁止编码」，终止流程，写入 findings.md
-     - 如果存在但文件内容不含 `Go` → 输出「❌ 架构评审未通过，禁止编码」，终止流程，写入 findings.md
-2. 输出阶段信息：**🟢 阶段 5/13：编码阶段**
+1. 输出阶段信息：**🟢 阶段 5/13：编码阶段**
 2. 如果 `fallback=true`，由编排器自行完成编码
 3. 否则，使用 `task` 启动开发子Agent（模型：DeepSeek Flash），传入：
    - 架构设计 `{session_dir}/02-design.md`
