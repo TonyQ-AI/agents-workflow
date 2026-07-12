@@ -230,7 +230,9 @@ task(
 
 1. 输出阶段信息：**🟢 阶段 9/13：部署阶段**
 2. 如果 `fallback=true`，由编排器自行完成部署方案
-3. 否则，使用 `task` 启动部署子Agent（模型：DeepSeek Flash）
+3. 否则，使用 `task` 启动部署子Agent（模型：DeepSeek Flash），传入：
+   - 部署目标：根据 `{code_path}` 检测项目类型（web/CLI/库），默认 development
+   - 构建命令：Go 项目用 `go build`，Node 项目用 `npm run build`，依此类推
 4. 等待子Agent完成
 5. 验证 `{session_dir}/06-deploy/DEPLOY.md` 已生成
 6. 更新进度 → 「🚀 部署」✅ 已完成
@@ -249,9 +251,16 @@ task(
 
 1. 输出阶段信息：**🟢 阶段 11/13：分支收尾**
 2. 注入 finishing-a-development-branch + chinese-commit-conventions + chinese-git-workflow 方法论
-3. 执行 git 操作：`git add -A` → 按规范生成 commit message → `git commit`
-4. 更新进度 → 「🌿 分支收尾」✅ 已完成
-5. 写入 checkpoint → `"branch_finish"`
+3. **分支策略**：
+   - 检查当前分支：如果在 `master`/`main` 上 → 创建 feature 分支 `feature/<项目名>-<短描述>` 并切换
+   - 如果已在 feature 分支 → 继续使用
+4. 执行 git 操作：
+   - `git add -A`
+   - 读取 `{session_dir}` 中的产出摘要，按 chinese-commit-conventions 格式生成 commit message
+   - `git commit -m "<生成的 message>"`
+   - 如果 commit 为空（无变更）→ 跳过，写入 findings.md 注明
+5. 更新进度 → 「🌿 分支收尾」✅ 已完成
+6. 写入 checkpoint → `"branch_finish"`
 
 ### 步骤11：版本登记
 
@@ -266,7 +275,7 @@ task(
 1. 输出阶段信息：**🟢 阶段 13/13：总结阶段**
 2. 读取各阶段的产出摘要
 3. 写入 `{session_dir}/SUMMARY.md`
-4. 知识沉淀：向 `{knowledge_path}` 追加本次会话的关键决策、经验教训、领域知识
+4. 知识沉淀：确保 `{knowledge_path}` 所在目录存在，如果文件不存在则创建并写入头部。向文件中追加本次会话的关键决策、经验教训、领域知识。
 
 ## 强制更新进度文件（关键操作！）
 
