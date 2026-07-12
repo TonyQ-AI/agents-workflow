@@ -194,22 +194,28 @@ task(
 6. 更新进度 → 「🧪 测试」✅ 已完成
 7. 写入 checkpoint → `"testing"`
 
-### 步骤6：架构扫描 — reasonix-arch-review（用法二）
+### 步骤6：架构扫描 — reasonix-arch-review（用法二）🔴 硬门控
 
-> `lite=true` 时跳过
-> 如果 `from_phase` 在审查或之后，跳过此步骤
+> **`lite=true` 时跳过此步骤**
+> `lite=false` 时此步骤为硬门控：不产出架构扫描报告，流程卡死，无法进入审查
 
-1. 输出阶段信息：**🟢 阶段 7/13：架构扫描**
-2. 注入 reasonix-arch-review 用法二指引
-3. 扫描代码结构，生成 HTML 报告
-4. 更新进度 → 「🔬 架构扫描」✅ 已完成
-5. 写入 checkpoint → `"arch_scan"`
+1. **前置验证**：确认上一步 `"testing"` 已完成。若无则终止。
+2. 输出阶段信息：**🟢 阶段 7/13：架构扫描 — 硬门控**
+3. 注入 reasonix-arch-review 用法二指引
+4. 扫描代码结构，**必须**生成 `{session_dir}/architecture-scan.html`
+5. **验证文件存在**：确认 `architecture-scan.html` 已生成，验证失败则**重试本步骤**
+6. 更新进度 → 「🔬 架构扫描」✅ 已完成
+7. 写入 checkpoint → `"arch_scan"`
 
 ### 步骤7：审查 — task(wf-reviewer) 或自行完成
 
 > 如果 `from_phase` 在部署或之后，跳过此步骤
 
-1. 输出阶段信息：**🟢 阶段 8/13：审查阶段**
+1. **🔴 架构扫描门控验证**：
+   - 如果 `lite=false` 且 `from_phase` 不是从审查或之后开始：
+     - 检查 `{session_dir}/architecture-scan.html` 是否存在
+     - 如果不存在 → 输出「❌ 架构扫描未完成，禁止审查」，终止流程，写入 findings.md
+2. 输出阶段信息：**🟢 阶段 8/13：审查阶段**
 2. 如果 `fallback=true`，由编排器自行完成审查
 3. 否则，使用 `task` 启动审查子Agent（模型：DeepSeek Pro），注入 requesting-code-review + receiving-code-review + chinese-code-review 方法论
 4. 等待子Agent完成
