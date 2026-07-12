@@ -105,9 +105,73 @@ v3.x 单引擎存在三个问题：
 
 ### 3.1 正常模式（task可用）
 
-编排器规划 -> 打包JSON -> 引擎启动自检 -> 12项任务依次执行：
-- 引擎直执行: 任务1/3/6/9/10/11/12
-- task派发: 任务2(wf-architect) 任务4(wf-developer) 任务5(wf-tester) 任务7(wf-reviewer) 任务8(wf-deployer)
+编排器完成交互式规划后，将 JSON 包裹传给执行引擎，引擎在独立上下文中按清单执行：
+
+```
+启动自检 -> 显示项目/模式/范围 -> 逐项执行
+```
+
+**任务1: 领域建模** — 引擎直执行
+- 读取 specs + task_plan
+- 注入 reasonix-domain-modeling 方法论
+- 提取实体、定义关系、建立通用语言
+- 产出: domain-model.md
+- 交叉验证: 概念是否与specs一致
+
+**任务2: 架构设计** — task(wf-architect) Pro模型
+- 传入 specs + domain-model + task_plan + 项目根目录
+- 如为回退重试，注入上次评审意见
+- 产出: 02-design.md
+
+**任务3: 架构评审(硬门控)** — 引擎直执行
+- 注入 reasonix-arch-review，6维评分(满分24)
+- Go(>=18): 产出 03-arch-review.md，进任务4
+- No-Go(<18): 回退任务2，最多3次，超限强制Go
+
+**任务4: 编码** — task(wf-developer) Flash模型
+- 启动前验证: 03-arch-review.md 必须存在且为Go
+- 传入 specs + design + task_plan + 项目根目录
+- --parallel时同时启动任务5
+- 注入 TDD/系统化调试/UI设计(按需)
+- 产出: 代码 + CHANGES.md
+
+**任务5: 测试** — task(wf-tester) Flash模型
+- --parallel时等待已在任务4启动的测试完成
+- 注入 dispatching-parallel-agents + verification
+- 产出: TEST_REPORT.md
+
+**任务6: 架构扫描(硬门控)** — 引擎直执行
+- 扫描代码结构，检测循环依赖、模块耦合
+- 无严重问题: 产出 architecture-scan.html，进任务7
+- 有严重问题: 回退任务4，最多3次
+
+**任务7: 审查** — task(wf-reviewer) Pro模型
+- 启动前验证: architecture-scan.html 必须存在
+- 注入代码审查 + 中文审查 + 反馈处理
+- 产出: 05-review.md
+
+**任务8: 部署** — task(wf-deployer) Flash模型
+- 检测项目类型，执行构建命令
+- 产出: DEPLOY.md
+
+**任务9: 文档检查** — 引擎直执行
+- 注入 chinese-documentation
+- 检查排版、术语、标点
+- OCR处理图片型文档
+- 产出: doc-check-report.md
+
+**任务10: 分支收尾** — 引擎直执行
+- git add + chinese-commit-conventions 格式提交
+- 询问是否推送/创建PR
+- 注入 finishing-a-development-branch + git-worktrees
+
+**任务11: 版本登记** — 引擎直执行
+- 注入 vt，更新 .vt.json
+
+**任务12: 生成总结** — 引擎直执行
+- 读取所有产出摘要，写入 SUMMARY.md
+- 知识沉淀: 提炼关键发现写入 KNOWLEDGE.md
+- 返回 JSON 摘要给编排器
 
 ### 3.2 硬门控介入
 
@@ -199,8 +263,8 @@ No-Go时回退任务2（最多3次，超限强制Go+记录风险）
 加 checkpoint.json 记录断点
 
 --from 恢复时验证前置文件存在
---to 阶段命中跳任务12
-阶段名: planning > domain_modeling > architecture > arch_review > coding > testing > arch_scan > review > deploy > doc_check > branch_finish > version_tracking
+--to 命中跳任务12
+阶段名映射: planning > domain_modeling > architecture > arch_review > coding > testing > arch_scan > review > deploy > doc_check > branch_finish > version_tracking
 
 progress标签映射表确保中文标签与英文checkpoint值对应
 
