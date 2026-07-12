@@ -225,13 +225,16 @@ task(
 
 1. 读取 `{SESSION_DIR}/SUMMARY.md`（如果存在），否则从各阶段产出物中收集摘要
 2. 读取 `{SESSION_DIR}/checkpoint.json` 获取最终状态
-3. 向用户呈现完整的执行报告：
+3. **验证并兜底进度更新**：检查 progress.md 中 `from_phase` 到 `to_phase` 之间的阶段是否都已标记完成。
+   - 如果有阶段执行了但 progress.md 未更新，**立即补写**进度文件和 checkpoint.json
+   - 这一步确保即使 subagent 遗漏了进度更新，外层也能兜底
+4. 向用户呈现完整的执行报告：
    - 各阶段完成状态（✅/❌/⏭️）
    - 核心产出物清单
    - 关键发现和决策
    - Token 消耗估算
    - 下一步建议（git 提交、PR、部署等）
-4. **reasonix-handoff 提示**：如果用户需要换会话继续，告知可使用 reasonix-handoff 技能交接上下文
+5. **reasonix-handoff 提示**：如果用户需要换会话继续，告知可使用 reasonix-handoff 技能交接上下文
 
 ## 错误处理
 
