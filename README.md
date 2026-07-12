@@ -277,7 +277,7 @@ steps:
 - ✅ **task_plan.md 统一**：规划阶段产出 `task_plan.md`，与 AGENTS.md 进度检查规则对齐，子Agent 交叉验证基准
 - ✅ **进度更新双重保障**：引擎内部强制更新 + 编排器兜底补写，不再遗漏
 - ✅ **新增 wf-orchestrator-engine**：subagent 执行引擎，独立上下文完整跑完 12 个阶段
-- ✅ **仓库梳理**：reasonix-workflow 定为主源，plugin 为发布包，40 个技能 SKILL.md 完全一致
+  
 
 ### v3.3（2026-07-09）
 
