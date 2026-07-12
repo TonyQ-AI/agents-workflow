@@ -228,27 +228,32 @@ task(
 3. 如果 `fallback=true`，由编排器自行完成编码
 4. 否则，使用 `task` 启动开发子Agent（模型：DeepSeek Flash），传入：
    - 架构设计 `{session_dir}/02-design.md`
+   - 领域模型 `{session_dir}/domain-model.md`
    - 任务清单 `{task_plan_path}`
    - 工作流目录 `{session_dir}`
    - 项目根目录 `{code_path}`
    - 方法论注入：test-driven-development / systematic-debugging（根据任务类型选择）
-4. 等待子Agent完成
-5. 验证 `{session_dir}/03-implementation/` 下有产出
-6. 更新进度 → 「💻 编码」✅ 已完成
-7. 写入 checkpoint → `"coding"`
+5. 等待子Agent完成
+6. 验证 `{session_dir}/03-implementation/` 下有产出
+7. 更新进度 → 「💻 编码」✅ 已完成
+8. 写入 checkpoint → `"coding"`
 
-4. **并行检查**：若 `parallel=true`，同时启动 `task(wf-tester)`（模型：DeepSeek Flash），与编码并行执行
+9. **并行检查**：若 `parallel=true`，同时启动 `task(wf-tester)`（模型：DeepSeek Flash），与编码并行执行
 
 ### 任务5：🧪 测试 — task(wf-tester) 或自行完成
 
 > 如果 `from_phase` 在审查或之后，跳过此任务
 
-0. **并行等待**：若 `parallel=true` 且任务4已启动测试，等待其完成，跳过本任务的 task 调用。否则正常执行。
+- **并行等待**：若 `parallel=true` 且任务4已启动测试，等待其完成，跳过本任务的 task 调用。否则正常执行。
 
 1. 输出阶段信息：**>>> 测试阶段**
 2. 注入 `verification-before-completion` 方法论：所有测试结论必须有命令输出作为证据
 3. 如果 `fallback=true`，由编排器自行完成测试
-3. 否则，使用 `task` 启动测试子Agent（模型：DeepSeek Flash）
+4. 否则，使用 `task` 启动测试子Agent（模型：DeepSeek Flash），传入：
+   - 项目根目录 `{code_path}`
+   - 工作流目录 `{session_dir}`
+   - 产出物路径 `{session_dir}/03-implementation/`
+   - 方法论注入：verification-before-completion
 4. 等待子Agent完成
 5. 验证 `{session_dir}/04-test/TEST_REPORT.md` 已生成
 6. 更新进度 → 「🧪 测试」✅ 已完成
@@ -282,7 +287,12 @@ task(
      - 如果不存在 → 输出「❌ 架构扫描未完成，回退到编码修复」，跳转到任务4，写入 findings.md
 2. 输出阶段信息：**>>> 审查阶段**
 3. 如果 `fallback=true`，由编排器自行完成审查
-4. 否则，使用 `task` 启动审查子Agent（模型：DeepSeek Pro），注入 requesting-code-review + receiving-code-review + chinese-code-review 方法论
+4. 否则，使用 `task` 启动审查子Agent（模型：DeepSeek Pro），传入：
+   - 项目根目录 `{code_path}`
+   - 工作流目录 `{session_dir}`
+   - 代码变更路径 `{session_dir}/03-implementation/`
+   - 设计规格 `{specs_path}`
+   - 方法论注入：requesting-code-review + receiving-code-review + chinese-code-review
 5. 等待子Agent完成
 6. 验证 `{session_dir}/05-review.md` 已生成
 7. 更新进度 → 「🔍 审查」✅ 已完成
@@ -308,8 +318,9 @@ task(
 2. 注入 chinese-documentation 方法论
 3. 读取工作流所有文档，检查排版、术语、标点、段落结构
 4. 对不符合规范的部分给出修改建议并自动修正
-5. 更新进度 → 「📖 文档检查」✅ 已完成
-6. 写入 checkpoint → `"doc_check"`
+5. **产出** `{session_dir}/doc-check-report.md`：记录检查的问题列表和修正摘要
+6. 更新进度 → 「📖 文档检查」✅ 已完成
+7. 写入 checkpoint → `"doc_check"`
 
 ### 任务10：🌿 分支收尾与提交
 
