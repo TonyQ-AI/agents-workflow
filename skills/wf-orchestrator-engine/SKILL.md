@@ -106,6 +106,25 @@ task(
 
 如果 `fallback=true`，不使用 task，由编排器自行完成各阶段。
 
+## 启动自检
+
+在执行任何步骤之前，**必须输出当前状态信息**：
+
+```
+🟢 工作流执行引擎已启动
+
+📋 项目: {project}
+📐 需求: {requirement}
+📂 会话: {session_dir}
+🔧 执行模式: {fallback ? '⚠️ 兜底模式（task不可用，引擎直执行）' : '✅ 正常模式（通过task派发子Agent）'}
+🪶 轻量模式: {lite ? '✅ 仅核心阶段' : '❌ 完整13阶段'}
+📊 阶段范围: {from_phase} → {to_phase}
+```
+
+**如果 `fallback=true`，必须显式告知用户**：
+> ⚠️ 当前环境不支持 `task()` 子Agent调用，已切换为兜底模式。
+> 所有阶段由我直接执行，耗时可能更长但不会中断。
+
 ## 执行步骤
 
 ### 步骤1：领域建模 — 提取领域概念与实体关系
@@ -168,7 +187,7 @@ task(
      - 如果文件不存在或决策为 No-Go → 输出「❌ 架构评审未通过，回退到架构设计阶段」，**跳转到步骤2**
 2. 输出阶段信息：**🟢 阶段 5/13：编码阶段**
 3. 如果 `fallback=true`，由编排器自行完成编码
-3. 否则，使用 `task` 启动开发子Agent（模型：DeepSeek Flash），传入：
+4. 否则，使用 `task` 启动开发子Agent（模型：DeepSeek Flash），传入：
    - 架构设计 `{session_dir}/02-design.md`
    - 任务清单 `{task_plan_path}`
    - 工作流目录 `{session_dir}`
@@ -217,12 +236,12 @@ task(
      - 检查 `{session_dir}/architecture-scan.html` 是否存在
      - 如果不存在 → 输出「❌ 架构扫描未完成，回退到编码修复」，跳转到步骤4，写入 findings.md
 2. 输出阶段信息：**🟢 阶段 8/13：审查阶段**
-2. 如果 `fallback=true`，由编排器自行完成审查
-3. 否则，使用 `task` 启动审查子Agent（模型：DeepSeek Pro），注入 requesting-code-review + receiving-code-review + chinese-code-review 方法论
-4. 等待子Agent完成
-5. 验证 `{session_dir}/05-review.md` 已生成
-6. 更新进度 → 「🔍 审查」✅ 已完成
-7. 写入 checkpoint → `"review"`
+3. 如果 `fallback=true`，由编排器自行完成审查
+4. 否则，使用 `task` 启动审查子Agent（模型：DeepSeek Pro），注入 requesting-code-review + receiving-code-review + chinese-code-review 方法论
+5. 等待子Agent完成
+6. 验证 `{session_dir}/05-review.md` 已生成
+7. 更新进度 → 「🔍 审查」✅ 已完成
+8. 写入 checkpoint → `"review"`
 
 ### 步骤8：部署 — task(wf-deployer) 或自行完成
 
