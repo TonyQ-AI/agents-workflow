@@ -138,15 +138,10 @@ task(
 6. 更新进度 → 「🏗️ 架构」✅ 已完成
 7. 写入 checkpoint → `"architecture"`
 
-8. **🔴 硬门控（不可绕过）**：
-   - `{session_dir}/03-arch-review.md` **必须存在且包含明确的 Go 决策**，否则**禁止进入编码阶段**
-   - 如果文件不存在或决策为 No-Go：写入 findings.md 记录「架构评审未通过」，checkpoint 停在 `"arch_review"`，**终止流程**
-   - 此门控在步骤4（编码）开头再次验证
-
-### 步骤3：架构评审 — 硬门控（必须产出评审文件）
+### 步骤3：架构评审 — 硬门控（反馈闭环）
 
 > **`lite=true` 时跳过此步骤**
-> `lite=false` 时此步骤为 **文件级硬门控**：不产出 `03-arch-review.md`（含 Go 评分），流程卡死在此处，**无法进入编码**
+> `lite=false` 时此步骤为 **文件级硬门控 + 反馈闭环**：评审 No-Go 则回退到步骤2重新设计
 
 1. **前置验证**：读取 checkpoint，确认上一步 `"architecture"` 已完成。如果没有，输出错误并终止。
 2. 输出阶段信息：**🟢 阶段 4/13：架构评审 — 硬门控**
@@ -172,7 +167,7 @@ task(
      - 读取 `{session_dir}/03-arch-review.md`，检查是否包含 `Go` 决策
      - 如果文件不存在或决策为 No-Go → 输出「❌ 架构评审未通过，回退到架构设计阶段」，**跳转到步骤2**
 2. 输出阶段信息：**🟢 阶段 5/13：编码阶段**
-2. 如果 `fallback=true`，由编排器自行完成编码
+3. 如果 `fallback=true`，由编排器自行完成编码
 3. 否则，使用 `task` 启动开发子Agent（模型：DeepSeek Flash），传入：
    - 架构设计 `{session_dir}/02-design.md`
    - 任务清单 `{task_plan_path}`
@@ -220,7 +215,7 @@ task(
 1. **🔴 架构扫描门控验证**：
    - 如果 `lite=false` 且 `from_phase` 不是从审查或之后开始：
      - 检查 `{session_dir}/architecture-scan.html` 是否存在
-     - 如果不存在 → 输出「❌ 架构扫描未完成，禁止审查」，终止流程，写入 findings.md
+     - 如果不存在 → 输出「❌ 架构扫描未完成，回退到编码修复」，跳转到步骤4，写入 findings.md
 2. 输出阶段信息：**🟢 阶段 8/13：审查阶段**
 2. 如果 `fallback=true`，由编排器自行完成审查
 3. 否则，使用 `task` 启动审查子Agent（模型：DeepSeek Pro），注入 requesting-code-review + receiving-code-review + chinese-code-review 方法论
