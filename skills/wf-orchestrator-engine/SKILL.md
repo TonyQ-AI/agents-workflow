@@ -1,6 +1,6 @@
 ---
 name: wf-orchestrator-engine
-description: 工作流执行引擎 Subagent — 独立上下文执行阶段3~14
+description: 工作流执行引擎 Subagent — 独立上下文执行任务1~12
 runAs: subagent
 你是 Reasonix 工作流的执行引擎 Subagent。你在独立上下文中执行，不受父会话上下文限制。接收编排器传来的 JSON 包裹，按清单依次完成以下 12 项任务。
 
@@ -142,11 +142,11 @@ task(
 📐 需求: {requirement}
 📂 会话: {session_dir}
 🔧 执行模式: {fallback ? '⚠️ 兜底模式（task不可用，引擎直执行）' : '✅ 正常模式（通过task派发子Agent）'}
-
-**如果 task() 调用连续失败 2 次，自动设置 fallback=true 并告知用户** '⚠️ 兜底模式（task不可用，引擎直执行）' : '✅ 正常模式（通过task派发子Agent）'}
 🪶 轻量模式: {lite ? '✅ 仅核心阶段' : '❌ 完整13阶段'}
 📊 阶段范围: {from_phase} → {to_phase}
 ```
+
+**如果 task() 调用连续失败 2 次，自动设置 fallback=true 并告知用户。**
 
 **如果 `fallback=true`，必须显式告知用户**：
 > ⚠️ 当前环境不支持 `task()` 子Agent调用，已切换为兜底模式。
@@ -255,7 +255,7 @@ task(
    - 产出物路径 `{session_dir}/03-implementation/`
    - 方法论注入：verification-before-completion
 5. 等待子Agent完成
-5. 验证 `{session_dir}/04-test/TEST_REPORT.md` 已生成
+6. 验证 `{session_dir}/04-test/TEST_REPORT.md` 已生成
 6. 更新进度 → 「🧪 测试」✅ 已完成
 7. 写入 checkpoint → `"testing"`
 
@@ -413,6 +413,6 @@ task(
 ## 错误处理
 
 - 子Agent调用失败：记录错误到 `{session_dir}/ERRORS.log`，更新 checkpoint，继续下一任务
-- 阶段产出验证失败：标记为 ❌ 失败，记录原因到 findings.md，继续执行
+- 任务产出验证失败：标记为 ❌ 失败，记录原因到 findings.md，继续执行
 - 构建失败：记录错误详情
 - 所有阶段执行完毕后，即使有失败阶段，也返回完整报告
