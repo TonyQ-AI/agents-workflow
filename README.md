@@ -1,8 +1,8 @@
-# Reasonix Workflow v4.1
+# Reasonix Workflow v4.1.1
 
 > 多 Agent 协同开发全流程自动化 · 双引擎 · 12项任务 · 40技能 · 硬门控 · fallback兜底
 
-[![Version](https://img.shields.io/badge/version-4.1-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-4.1.1-blue)](VERSION)
 [![Skills](https://img.shields.io/badge/skills-40-green)](skills/)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
@@ -102,6 +102,10 @@
 ---
 
 ## 更新日志
+
+### v4.1.1（2026-07-13）
+
+引擎执行步骤全部改为无序列表，永久消除编号错误。
 
 ### v4.1（2026-07-13）— 23项深度修复
 
