@@ -17,8 +17,8 @@ runAs: subagent
 ```
 
 你将自动读取以下文件作为输入：
-- `{工作流目录}/01-plan.md`（规划Agent产出）
-- `{项目根目录}/docs/superpowers/domain-models/*.md`（领域建模Agent产出的领域模型、实体关系、通用语言）
+- `docs/superpowers/plans/task_plan.md`（规划产出）（规划Agent产出）
+- `{session_dir}/domain-model.md`（引擎任务1产出）（领域建模Agent产出的领域模型、实体关系、通用语言）
 - `{项目根目录}/docs/superpowers/specs/*-design.md`（用户确认后的原始设计规格，用于与计划交叉验证）
 
 ## 你的任务

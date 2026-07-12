@@ -17,7 +17,7 @@ runAs: subagent
 ```
 
 你将自动读取以下文件作为输入：
-- `{工作流目录}/01-plan.md`
+- `docs/superpowers/plans/task_plan.md`（规划产出）
 - `{工作流目录}/02-design.md`
 - `{工作流目录}/03-implementation/CHANGES.md`
 - `{工作流目录}/04-test/TEST_REPORT.md`（测试报告，含测试通过率）

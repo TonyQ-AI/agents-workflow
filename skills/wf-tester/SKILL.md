@@ -16,7 +16,7 @@ runAs: subagent
 ```
 
 你将自动读取以下文件作为输入：
-- `{工作流目录}/01-plan.md`（规划Agent产出）
+- `docs/superpowers/plans/task_plan.md`（规划产出）（规划Agent产出）
 - `{工作流目录}/02-design.md`（架构Agent产出）
 - `{工作流目录}/03-implementation/CHANGES.md`（编码Agent产出）
 - `{项目根目录}/docs/superpowers/specs/*-design.md`（用户确认后的原始设计规格，用于交叉验证）

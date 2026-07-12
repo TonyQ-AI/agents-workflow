@@ -6,7 +6,7 @@ runAs: subagent
 
 # wf-orchestrator-engine — 工作流执行引擎
 
-你是 Reasonix 工作流的执行引擎 Subagent。你在独立上下文中执行，不受父会话的上下文限制。
+你是 Reasonix 工作流的执行引擎 Subagent。你在独立上下文中执行，不受父会话上下文限制。接收编排器传来的 JSON 包裹，按清单依次完成以下 12 项任务。
 
 ## 接收参数
 
@@ -26,13 +26,16 @@ runAs: subagent
   "from_phase": "domain_modeling",
   "to_phase": "version_tracking",
   "lite": false,
+  "parallel": false,
   "fallback": false,
   "no_superpowers": false,
-  "model_override": ""
+  "model_override": "",
+  "timeout": 300
 }
 ```
 
 阶段名称映射（用于 --from / --to）：
+- `planning` — 规划（编排器完成，引擎默认跳过，等同于 `domain_modeling`）
 - `domain_modeling` — 领域建模
 - `architecture` — 架构设计
 - `arch_review` — 架构评审
@@ -45,6 +48,21 @@ runAs: subagent
 - `branch_finish` — 分支收尾
 - `version_tracking` — 版本登记
 - `summary` — 总结
+
+**progress.md 标签映射**（更新进度时使用）：
+| checkpoint值 | progress.md行标签 |
+|-------------|-----------------|
+| domain_modeling | ??? 领域建模 |
+| architecture | ???? 架构 |
+| arch_review | ???? 架构评审 |
+| coding | ??? 编码 |
+| testing | ??? 测试 |
+| arch_scan | ??? 架构扫描 |
+| review | ??? 审查 |
+| deploy | ??? 部署 |
+| doc_check | ??? 文档检查 |
+| branch_finish | ??? 分支收尾 |
+| version_tracking | ??? 版本登记 |
 
 ## 模型分配
 
@@ -63,7 +81,9 @@ runAs: subagent
 
 ## 进度文件注入
 
-每个阶段派发子Agent前，检查 `task_plan.md` 是否存在。如果存在，将其内容连同 `progress.md`、`findings.md` 一并注入到子Agent的 prompt 中：
+每个任务使用 task() 前，**必须**执行以下注入（不注入则 task 缺少上下文）：
+
+检查 `task_plan.md` 是否存在。如果存在，将其内容连同 `progress.md`、`findings.md` 一并注入到子Agent的 prompt 中：
 
 ```
 ===== 📋 进度跟踪 =====
@@ -91,7 +111,7 @@ task(
   description="架构设计任务",
   prompt="<完整上下文和指令>",
   model="deepseek/deepseek-v4-pro",
-  timeout=300
+  timeout={timeout}
 )
 ```
 
@@ -106,6 +126,11 @@ task(
 
 如果 `fallback=true`，不使用 task，由编排器自行完成各阶段。
 
+## 启动前准备
+
+1. 确保以下目录存在：`docs/superpowers/plans/`、`docs/superpowers/knowledge/`
+2. 若 KNOWLEDGE.md 不存在，创建空文件并写入 `# 项目知识库`
+
 ## 启动自检
 
 在执行任何步骤之前，**必须输出当前状态信息**：
@@ -116,7 +141,9 @@ task(
 📋 项目: {project}
 📐 需求: {requirement}
 📂 会话: {session_dir}
-🔧 执行模式: {fallback ? '⚠️ 兜底模式（task不可用，引擎直执行）' : '✅ 正常模式（通过task派发子Agent）'}
+🔧 执行模式: {fallback ? '??? 兜底模式（task不可用，引擎直执行）' : '?_正常模式（通过task派发子Agent）'}
+
+**如果 task() 调用连续失败 2 次，自动设置 fallback=true 并告知用户** '⚠️ 兜底模式（task不可用，引擎直执行）' : '✅ 正常模式（通过task派发子Agent）'}
 🪶 轻量模式: {lite ? '✅ 仅核心阶段' : '❌ 完整13阶段'}
 📊 阶段范围: {from_phase} → {to_phase}
 ```
@@ -127,11 +154,19 @@ task(
 
 ## 执行步骤
 
-### 步骤1：领域建模 — 提取领域概念与实体关系
+**from_phase 前置验证**：启动时若 from_phase 不在 domain_modeling，验证以下文件存在：
+- `{specs_path}`（必须存在，否则报错退出）
+- `{task_plan_path}`（必须存在，否则报错退出）
+- `{session_dir}/domain-model.md`（from_phase >= architecture 时检查）
 
-> 如果 `from_phase` 在架构或之后，跳过此步骤
+**全局 to_phase 规则**：每个任务开始前检查 `to_phase`。若当前阶段名等于 `to_phase`，完成本任务后跳转到任务12（总结），不再执行后续任务。
+顺序：`domain_modeling -> architecture -> arch_review -> coding -> testing -> arch_scan -> review -> deploy -> doc_check -> branch_finish -> version_tracking`
 
-1. 输出阶段信息：**🟢 阶段 2/13：领域建模**
+### 任务1：🧩 领域建模 — 提取领域概念与实体关系
+
+> 如果 `from_phase` 在架构或之后，跳过此任务
+
+1. 输出阶段信息：**>>> 领域建模**
 2. 读取设计规格 `{specs_path}` 和 `{task_plan_path}` 作为输入
 3. 注入 `reasonix-domain-modeling` 方法论指引
 4. 提取领域概念，产出 `{session_dir}/domain-model.md`
@@ -139,13 +174,15 @@ task(
 6. 更新进度：progress.md 中「🧩 领域建模」行 ✅ 已完成
 7. 写入 checkpoint → `last_completed_phase: "domain_modeling"`
 
-### 步骤2：架构设计 — 使用 task(wf-architect) 或自行完成
+### 任务2：🏗️ 架构设计 — 使用 task(wf-architect) 或自行完成
 
-> 如果 `from_phase` 在编码或之后，跳过此步骤
+> 如果 `from_phase` 在编码或之后，跳过此任务
 
-1. 输出阶段信息：**🟢 阶段 3/13：架构设计**
+1. 输出阶段信息：**>>> 架构设计**
 2. 如果 `fallback=true`，由编排器自行完成架构设计：读取 `domain-model.md` 和 `task_plan.md`，直接产出 `{session_dir}/02-design.md`
-3. 否则，使用 `task` 工具启动架构子Agent（模型：DeepSeek Pro），传入：
+3. 否则，使用 `task` 工具启动架构子Agent（模型：DeepSeek Pro）：
+   - **重入检查**：若存在 `{session_dir}/03-arch-review.md` 且包含 No-Go 意见，**必须**将评审意见全文注入 prompt，标注 «⚠️ 上次评审未通过，请根据以下意见修改设计：»
+   - 传入：
    - 设计规格 `{specs_path}`
    - 领域模型 `{session_dir}/domain-model.md`
    - 任务清单 `{task_plan_path}`
@@ -157,35 +194,37 @@ task(
 6. 更新进度 → 「🏗️ 架构」✅ 已完成
 7. 写入 checkpoint → `"architecture"`
 
-### 步骤3：架构评审 — 硬门控（反馈闭环）
+### 任务3：🏛️ 架构评审（硬门控 + 反馈闭环）
 
-> **`lite=true` 时跳过此步骤**
-> `lite=false` 时此步骤为 **文件级硬门控 + 反馈闭环**：评审 No-Go 则回退到步骤2重新设计
+> **`lite=true` 或 `from_phase` 在 `arch_review` 之后时跳过**
+> 否则此步骤为 **文件级硬门控 + 反馈闭环**：评审 No-Go 则回退到任务2重新设计（最多重试 3 次，超限则强制 Go 并记录风险）
 
-1. **前置验证**：读取 checkpoint，确认上一步 `"architecture"` 已完成。如果没有，输出错误并终止。
-2. 输出阶段信息：**🟢 阶段 4/13：架构评审 — 硬门控**
-3. 注入 `reasonix-arch-review` 方法论指引（6 维评分：功能完整性/可扩展性/性能/安全性/可维护性/成本）
+1. **前置验证**：若 `from_phase` 在 `arch_review` 之后，输出«⏭️ 架构评审已跳过（--from）»，跳转到下一任务。否则确认 `"architecture"` 已完成。
+2. 输出阶段信息：**>>> 架构评审 — 硬门控**
+3. 注入 `reasonix-arch-review` 方法论指引（6 维评分：1-4 分/维，满分 24，>=18 为 Go）
 4. 读取架构设计 `{session_dir}/02-design.md` 和领域模型
 5. 执行架构评审，**必须**产出 `{session_dir}/03-arch-review.md`，**必须包含**：
    - 6 维逐项评分（1-10 分）
-   - 总分及 Go/No-Go 决策
+   - 总分（满分 24）及 Go/No-Go 决策
    - **评审意见摘要：列出具体问题及改进建议**
 6. **验证文件存在**：确认 `03-arch-review.md` 已生成。
 7. **判定**：
-   - **Go（总分 ≥ 35/60）** → 更新进度 → ✅，写入 checkpoint → `"arch_review"`，进入编码
-   - **No-Go（总分 < 35/60）** → **不更新进度，不写 checkpoint**，写入 findings.md 记录评审失败原因
-     └── **回退到步骤2（架构设计）**：读取评审意见，重新设计架构后再次评审
+   - **Go（总分 >= 18/24）** → 更新进度 → ✅，写入 checkpoint → `"arch_review"`，进入编码
+   - **No-Go（总分 < 18/24）** → **不更新进度，不写 checkpoint**（写入临时状态 `arch_review_retry_N` 便于崩溃恢复）
+       - 检查回退次数：若已回退 >= 3 次，**强制 Go**（记录高风险到 findings.md），不再回退
+       - 否则写入 findings.md 记录评审失败原因，回退到任务2，写入 findings.md 记录评审失败原因
+     └── **回退到任务2（架构设计）**：读取评审意见，重新设计架构后再次评审
      └── 形成循环：① 架构设计 → ② 架构评审 → No-Go → ① 架构设计（改进）→ ② 架构评审 → Go → ③ 编码
 
-### 步骤4：编码 — task(wf-developer) 或自行完成
+### 任务4：💻 编码 — task(wf-developer) 或自行完成
 
-> 如果 `from_phase` 在测试或之后，跳过此步骤
+> 如果 `from_phase` 在测试或之后，跳过此任务
 
 1. **🔴 架构评审门控验证**：
    - 如果 `lite=false` 且 `from_phase` 不是从编码或之后开始：
      - 读取 `{session_dir}/03-arch-review.md`，检查是否包含 `Go` 决策
-     - 如果文件不存在或决策为 No-Go → 输出「❌ 架构评审未通过，回退到架构设计阶段」，**跳转到步骤2**
-2. 输出阶段信息：**🟢 阶段 5/13：编码阶段**
+     - 如果文件不存在或决策为 No-Go → 输出「❌ 架构评审未通过，回退到架构设计阶段」，**跳转到任务2**
+2. 输出阶段信息：**>>> 编码阶段**
 3. 如果 `fallback=true`，由编排器自行完成编码
 4. 否则，使用 `task` 启动开发子Agent（模型：DeepSeek Flash），传入：
    - 架构设计 `{session_dir}/02-design.md`
@@ -198,44 +237,50 @@ task(
 6. 更新进度 → 「💻 编码」✅ 已完成
 7. 写入 checkpoint → `"coding"`
 
-### 步骤5：测试 — task(wf-tester) 或自行完成
+4. **并行检查**：若 `parallel=true`，同时启动 `task(wf-tester)`（模型：DeepSeek Flash），与编码并行执行
 
-> 如果 `from_phase` 在审查或之后，跳过此步骤
+### 任务5：🧪 测试 — task(wf-tester) 或自行完成
 
-1. 输出阶段信息：**🟢 阶段 6/13：测试阶段**
-2. 如果 `fallback=true`，由编排器自行完成测试
+> 如果 `from_phase` 在审查或之后，跳过此任务
+
+0. **并行等待**：若 `parallel=true` 且任务4已启动测试，等待其完成，跳过本任务的 task 调用。否则正常执行。
+
+1. 输出阶段信息：**>>> 测试阶段**
+2. 注入 `verification-before-completion` 方法论：所有测试结论必须有命令输出作为证据
+3. 如果 `fallback=true`，由编排器自行完成测试
 3. 否则，使用 `task` 启动测试子Agent（模型：DeepSeek Flash）
 4. 等待子Agent完成
 5. 验证 `{session_dir}/04-test/TEST_REPORT.md` 已生成
 6. 更新进度 → 「🧪 测试」✅ 已完成
 7. 写入 checkpoint → `"testing"`
 
-### 步骤6：架构扫描 — reasonix-arch-review（用法二）🔴 硬门控
+### 任务6：🔬 架构扫描（硬门控 + 发现即回退）
 
-> **`lite=true` 时跳过此步骤**
-> `lite=false` 时此步骤为硬门控：扫描发现问题则回退到编码修复
+> **`lite=true` 或 `from_phase` 在 `arch_scan` 之后时跳过**
+> 否则此步骤为硬门控：扫描发现问题则回退到编码修复
 
-1. **前置验证**：确认上一步 `"testing"` 已完成。若无则终止。
-2. 输出阶段信息：**🟢 阶段 7/13：架构扫描 — 硬门控（发现即回退）**
+1. **前置验证**：若 `from_phase` 在 `arch_scan` 之后，输出«⏭️ 架构扫描已跳过（--from）»，跳转到下一任务。否则确认 `"testing"` 已完成。
+2. 输出阶段信息：**>>> 架构扫描 — 硬门控（发现即回退）**
 3. 注入 reasonix-arch-review 用法二指引
 4. 扫描代码结构，**必须**生成 `{session_dir}/architecture-scan.html`
    - 报告必须包含：检测到的问题列表、严重程度、建议修复方案
 5. **验证文件存在**：确认 `architecture-scan.html` 已生成，验证失败则**重试本步骤**
 6. **判定**：
    - **无严重问题** → 更新进度 → ✅，写入 checkpoint → `"arch_scan"`，进入审查
-   - **有严重问题** → 不更新进度，写入 findings.md 记录问题详情
-     └── **回退到步骤4（编码）**：根据扫描报告修复问题后重新测试+扫描
+   - **有严重问题** → 不更新进度，写入 checkpoint `arch_scan_retry_N` 便于崩溃恢复，写入 findings.md 记录问题详情
+       - 检查回退次数：若已回退 >= 3 次，**强制通过**（记录高风险），继续下一任务
+     └── **回退到任务4（编码）**：根据扫描报告修复问题后重新测试+扫描
      └── 形成循环：④ 编码 → ⑤ 测试 → ⑥ 扫描 → 有问题 → ④ 编码（修复）→ ⑤ 测试 → ⑥ 扫描 → 通过 → ⑦ 审查
 
-### 步骤7：审查 — task(wf-reviewer) 或自行完成
+### 任务7：🔍 审查 — task(wf-reviewer) 或自行完成
 
-> 如果 `from_phase` 在部署或之后，跳过此步骤
+> 如果 `from_phase` 在部署或之后，跳过此任务
 
 1. **🔴 架构扫描门控验证**：
    - 如果 `lite=false` 且 `from_phase` 不是从审查或之后开始：
      - 检查 `{session_dir}/architecture-scan.html` 是否存在
-     - 如果不存在 → 输出「❌ 架构扫描未完成，回退到编码修复」，跳转到步骤4，写入 findings.md
-2. 输出阶段信息：**🟢 阶段 8/13：审查阶段**
+     - 如果不存在 → 输出「❌ 架构扫描未完成，回退到编码修复」，跳转到任务4，写入 findings.md
+2. 输出阶段信息：**>>> 审查阶段**
 3. 如果 `fallback=true`，由编排器自行完成审查
 4. 否则，使用 `task` 启动审查子Agent（模型：DeepSeek Pro），注入 requesting-code-review + receiving-code-review + chinese-code-review 方法论
 5. 等待子Agent完成
@@ -243,11 +288,11 @@ task(
 7. 更新进度 → 「🔍 审查」✅ 已完成
 8. 写入 checkpoint → `"review"`
 
-### 步骤8：部署 — task(wf-deployer) 或自行完成
+### 任务8：🚀 部署 — task(wf-deployer) 或自行完成
 
-> 如果 `from_phase` 在文档检查或之后，跳过此步骤
+> 如果 `from_phase` 在文档检查或之后，跳过此任务
 
-1. 输出阶段信息：**🟢 阶段 9/13：部署阶段**
+1. 输出阶段信息：**>>> 部署阶段**
 2. 如果 `fallback=true`，由编排器自行完成部署方案
 3. 否则，使用 `task` 启动部署子Agent（模型：DeepSeek Flash），传入：
    - 部署目标：根据 `{code_path}` 检测项目类型（web/CLI/库），默认 development
@@ -257,18 +302,18 @@ task(
 6. 更新进度 → 「🚀 部署」✅ 已完成
 7. 写入 checkpoint → `"deploy"`
 
-### 步骤9：文档质量检查
+### 任务9：📖 文档检查
 
-1. 输出阶段信息：**🟢 阶段 10/13：文档检查**
+1. 输出阶段信息：**>>> 文档检查**
 2. 注入 chinese-documentation 方法论
 3. 读取工作流所有文档，检查排版、术语、标点、段落结构
 4. 对不符合规范的部分给出修改建议并自动修正
 5. 更新进度 → 「📖 文档检查」✅ 已完成
 6. 写入 checkpoint → `"doc_check"`
 
-### 步骤10：分支收尾与提交
+### 任务10：🌿 分支收尾与提交
 
-1. 输出阶段信息：**🟢 阶段 11/13：分支收尾**
+1. 输出阶段信息：**>>> 分支收尾**
 2. 注入 finishing-a-development-branch + chinese-commit-conventions + chinese-git-workflow 方法论
 3. **分支策略**：
    - 检查当前分支：如果在 `master`/`main` 上 → 创建 feature 分支 `feature/<项目名>-<短描述>` 并切换
@@ -281,20 +326,36 @@ task(
 5. 更新进度 → 「🌿 分支收尾」✅ 已完成
 6. 写入 checkpoint → `"branch_finish"`
 
-### 步骤11：版本登记
+### 任务11：📊 版本登记
 
-1. 输出阶段信息：**🟢 阶段 12/13：版本登记**
+1. 输出阶段信息：**>>> 版本登记**
 2. 注入 vt 方法论
 3. 生成版本记录条目到 `{code_path}/.vt.json`
 4. 更新进度 → 「📊 版本登记」✅ 已完成
 5. 写入 checkpoint → `"version_tracking"`
 
-### 步骤12：生成会话总结
+### 任务12：🟢 生成总结
 
-1. 输出阶段信息：**🟢 阶段 13/13：总结阶段**
+1. 输出阶段信息：**>>> 总结阶段**
 2. 读取各阶段的产出摘要
 3. 写入 `{session_dir}/SUMMARY.md`
-4. 知识沉淀：确保 `{knowledge_path}` 所在目录存在，如果文件不存在则创建并写入头部。向文件中追加本次会话的关键决策、经验教训、领域知识。
+4. 知识沉淀：确保 `{code_path}/docs/superpowers/knowledge/` 目录存在（引擎启动时已检查），如果文件不存在则创建并写入头部。向文件中追加以下结构化内容：
+
+```markdown
+## ??? 会话: {YYYY-MM-DD} — {project}
+
+### ??? 关键决策
+- {技术选型及理由}
+
+### ??? 经验教训
+- {踩坑记录}
+
+### ??? 领域知识
+- {实体/术语发现}
+
+### ??? 注意事项
+- {审查中发现的问题}
+```
 
 ## 强制更新进度文件（关键操作！）
 
@@ -330,6 +391,13 @@ task(
   "errors": []
 }
 ```
+
+## 产物验证规范
+
+每个任务完成后验证产出文件存在。失败时：
+1. 第 1 次失败 → 重试当前任务
+2. 第 2 次失败 → 标记 ❌ 失败，记录 findings.md，继续下一任务
+3. 第 3 次及以后 → 直接继续（不阻塞流程）
 
 ## 错误处理
 
