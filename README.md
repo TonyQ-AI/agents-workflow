@@ -2,6 +2,9 @@
 
 > 多Agent协同开发工作流 · 双模式 · 自动检测 task 可用性 · 40 个技能
 
+[![Version](https://img.shields.io/badge/version-4.1.4-blue)](VERSION)
+[![Skills](https://img.shields.io/badge/skills-40-green)](skills/)
+
 ## 双模式自动切换
 
 本工作流自动检测平台能力，无需手动选择：
@@ -36,6 +39,10 @@ Workflow-Dualmode（双模式 · 40 技能 · 自适应）
 ```
 
 ## 更新日志
+
+### v4.1.4（2026-07-13）— 引擎技能修复
+
+- 修复 `wf-orchestrator-engine/SKILL.md` YAML 前页缺少闭合 `---` 分隔符
 
 ### v4.1.3（2026-07-13）— 全平台适配
 

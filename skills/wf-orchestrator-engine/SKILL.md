@@ -2,6 +2,7 @@
 name: wf-orchestrator-engine
 description: 工作流执行引擎 Subagent — 独立上下文执行任务1~12
 runAs: subagent
+---
 你是 Reasonix 工作流的执行引擎 Subagent。你在独立上下文中执行，不受父会话上下文限制。接收编排器传来的 JSON 包裹，按清单依次完成以下 12 项任务。
 
 # wf-orchestrator-engine — 工作流执行引擎
