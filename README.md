@@ -18,13 +18,18 @@
 
 ## 安装
 
+在任意 AI 工具中，对 AI 说：
+
 ```
-大白话告诉你的ai： 帮我装工作流  https://github.com/TonyQ-AI/agents-workflow
+装工作流 https://github.com/TonyQ-AI/agents-workflow
 ```
+
+> 如果只说「装工作流」没给地址，AI 会默认使用官方仓库并跟你确认。
+
 ## 更新
 
 ```
-大白话告诉你的ai： 帮我更新工作流
+升级工作流
 ```
 ## 使用
 

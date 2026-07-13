@@ -12,7 +12,13 @@
 装工作流
 ```
 
-AI 会自动克隆本仓库（https://github.com/TonyQ-AI/agents-workflow）并完成全部安装。
+在 AI 对话中输入（带仓库地址）：
+
+```
+装工作流 https://github.com/TonyQ-AI/agents-workflow
+```
+
+> 如果只说「装工作流」，AI 会默认使用官方仓库并跟你确认。
 
 或者直接说 `/agents-workflow` 也能触发安装。
 
