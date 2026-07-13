@@ -33,11 +33,9 @@
 ## 项目关系
 
 ```
-workflow-task（支持 task 的工具 · 40 技能）
-       ↓ 改造
-workflow-inline（纯 inline · 39 技能 · 无 task 依赖）
-       ↓ 合并
-Workflow-Dualmode（双模式 · 40 技能 · 自适应）
+reasonix-workflow（旧版，已发布）
+       ↓ 整合
+agents-workflow（新版 · 双模式 · 40 技能 · 自适应）
 ```
 
 ## 更新日志
