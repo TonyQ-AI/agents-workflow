@@ -9,6 +9,6 @@ network = true
 [[plugins]]
 name    = "mimo-multimodal"
 command = "npx"
-args    = ["tonyq-mimo-mcp-server"]
+args    = ["tonyq-mimo-mcp-server", "--", "mimo-mcp-server"]
 env     = { MIMO_API_KEY = "${MIMO_API_KEY}" }
 
