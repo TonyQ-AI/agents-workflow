@@ -57,13 +57,13 @@ name    = "mimo-multimodal"
 command = "npx"
 args    = ["-y", "tonyq-mimo-mcp-server"]
 env     = {
-  MIMO_API_URL  = "https://api.xiaomimimo.com/v1/chat/completions",
+  MIMO_API_URL = "${MIMO_API_URL:-https://api.xiaomimimo.com/v1/chat/completions}",
   MIMO_API_KEY = "${MIMO_API_KEY}"
 }
 call_timeout_seconds = 600
 ```
 
-### 步骤5：配置 API key
+### 步骤5：配置 API key（先询问用户是 Token Plan 还是 Standard API）
 
 **提示用户**设置以下环境变量（存入 `~/.reasonix/.env`）：
 
