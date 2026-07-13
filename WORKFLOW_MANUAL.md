@@ -295,7 +295,7 @@ Pro模型(架构/审查) Flash模型(编码/测试/部署)
 
 ## 10. MCP 多模态集成
 
-MiMo: npx mimo-mcp-server (4个技能: 图片/音频/视频/TTS)
+MiMo: npx tonyq-mimo-mcp-server (7个工具: 图片/音频/视频理解 + ASR + TTS + 音色设计 + 音色克隆)
 Baidu OCR: MCP SSE + REST API双模式
 
 ---

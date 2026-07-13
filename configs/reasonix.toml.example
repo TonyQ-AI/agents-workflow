@@ -10,5 +10,5 @@ network = true
 name    = "mimo-multimodal"
 command = "npx"
 args    = ["tonyq-mimo-mcp-server", "--", "mimo-mcp-server"]
-env     = { MIMO_API_KEY = "${MIMO_API_KEY}" }
+env     = { MIMO_API_URL = "https://api.xiaomimimo.com/v1/chat/completions", MIMO_API_KEY = "${MIMO_API_KEY}" }
 

@@ -2,21 +2,16 @@
   "mcpServers": {
     "mimo-multimodal": {
       "name": "mimo-multimodal",
-      "description": "小米 MiMo 多模态 MCP 服务器 — 图片/音频/视频理解 + TTS",
-      "command": "node",
+      "description": "小米 MiMo 多模态 MCP 服务器 — 图片/音频/视频理解 + TTS + ASR",
+      "command": "npx",
       "args": [
-        "F:\\ReasonixTest\\global-workspace\\mimo-agent-skill\\mcp-server\\dist\\index.js"
+        "-y",
+        "tonyq-mimo-mcp-server"
       ],
       "env": {
-        "MIMO_API_BASE": "https://api.xiaomimimo.com/v1",
+        "MIMO_API_URL": "https://api.xiaomimimo.com/v1/chat/completions",
         "MIMO_API_KEY": "${MIMO_API_KEY}"
-      },
-      "tools": [
-        "understand_image",
-        "understand_audio",
-        "understand_video",
-        "tts"
-      ]
+      }
     }
   },
   "skills": {
