@@ -1,6 +1,6 @@
-# Workflow Dualmode
+# agents-workflow
 
-> 多Agent协同开发工作流 · 双模式 · 自动检测 task 可用性 · 40 个技能
+> 多Agent协同开发工作流 · 双模式自适应 · 40 个技能 · 全平台兼容
 
 [![Version](https://img.shields.io/badge/version-4.1.5-blue)](VERSION)
 [![Skills](https://img.shields.io/badge/skills-40-green)](skills/)
@@ -11,7 +11,7 @@
 
 | 模式 | 条件 | 子 Agent | 并行 | 适用工具 |
 |------|------|:------:|:----:|---------|
-| **正常模式** | task 工具可用 | 独立会话派发 | ✅ | Reasonix 桌面版 |
+| **正常模式** | task 工具可用 | 独立会话派发 | ✅ | 支持 task 的工具 |
 | **inline 模式** | task 不可用 | 编排器亲自完成 | ❌ | Claude Code / Cursor / 其他 |
 
 > 两种模式功能完全一致（12 项任务全覆盖），inline 模式仅执行速度略慢。详见 [技术手册 §5](WORKFLOW_MANUAL.md#5-双模式自动切换)。

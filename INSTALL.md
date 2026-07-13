@@ -1,4 +1,4 @@
-# Workflow Dualmode 安装指南
+# agents-workflow 安装指南
 
 > 一键安装/升级多Agent协同开发工作流 · 双模式自适应 · 40 个技能
 

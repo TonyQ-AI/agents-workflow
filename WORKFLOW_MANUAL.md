@@ -1,4 +1,4 @@
-# Workflow Dualmode — 完整技术手册 v4.1.5
+# agents-workflow — 完整技术手册 v4.1.5
 
 > 版本：4.1.5 · 最后更新：2026-07-13
 

@@ -1,6 +1,6 @@
 ---
 name: wf-orchestrator
-description: "Workflow Dualmode — 自动检测 task 可用性，支持所有平台"
+description: "agents-workflow — 自动检测 task 可用性，支持所有平台"
 ---
 
 # wf-orchestrator — 多Agent协同开发主编排器
