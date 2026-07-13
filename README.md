@@ -107,7 +107,8 @@
 
 - **MCP 服务迁移**：`mimo-mcp-server` 改为 `tonyq-mimo-mcp-server`，不再依赖 alionsss 发布的 npm 包
 - **工具名对齐**：缓存工具名统一加 `mimo_` 前缀（`understand_image` → `mimo_understand_image`），修复新版 server 不兼容问题
-- **npx 参数修复**：因包名与二进制名不一致，配置增加 `"--"` 分隔符确保 npx 正确找到入口
+- **npx 参数修复：因包名与二进制名不一致，配置增加 `"--"` 分隔符确保 npx 正确找到入口
+- **环境变量修复**：`MIMO_API_BASE` → `MIMO_API_URL`，MCP 服务器读的是后者，配错导致 401/404
 
 ### v4.1.1（2026-07-13）
 
