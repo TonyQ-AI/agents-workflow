@@ -1,4 +1,4 @@
-﻿---
+---
 name: workflow-installer
 description: "涓€閿畨瑁?Workflow Task 宸ヤ綔娴佲€斺€旇銆岃宸ヤ綔娴併€嶈嚜鍔ㄦ悶瀹?
 ---
@@ -20,8 +20,8 @@ description: "涓€閿畨瑁?Workflow Task 宸ヤ綔娴佲€斺€旇銆
 ### 姝ラ2锛氬鍒舵妧鑳?
 ```powershell
 # 澶嶅埗鎵€鏈?40 涓妧鑳藉埌椤圭洰
-New-Item -Path ".reasonix/skills" -ItemType Directory -Force | Out-Null
-Copy-Item -Recurse "$env:TEMP/workflow-installer/skills/*" ".reasonix/skills/" -Force
+New-Item -Path "skills" -ItemType Directory -Force | Out-Null
+Copy-Item -Recurse "$env:TEMP/workflow-installer/skills/*" "skills/" -Force
 ```
 
 ### 姝ラ3锛氶厤缃?AGENTS.md锛堣繘搴︽鏌ヨ鍒欙級
@@ -54,7 +54,7 @@ call_timeout_seconds = 600
 
 ### 姝ラ5锛氶厤缃?API key
 
-**鎻愮ず鐢ㄦ埛**璁剧疆浠ヤ笅鐜鍙橀噺锛堝瓨鍏?`~/.reasonix/.env`锛夛細
+**鎻愮ず鐢ㄦ埛**璁剧疆浠ヤ笅鐜鍙橀噺锛堝瓨鍏?`project/.env`锛夛細
 
 ```env
 DEEPSEEK_API_KEY=sk-xxxxx    # 宸ヤ綔娴佹帹鐞嗙敤锛堝繀濉級
@@ -66,13 +66,13 @@ MIMO_API_KEY=sk-xxxxx         # 澶氭ā鎬佸垎鏋愮敤锛堝彲閫夛級
 纭浠ヤ笅鍏抽敭鏂囦欢宸插氨浣嶏細
 
 ```
-- [ ] .reasonix/skills/wf-orchestrator/SKILL.md
-- [ ] .reasonix/skills/wf-orchestrator-engine/SKILL.md
-- [ ] .reasonix/skills/wf-architect/SKILL.md
-- [ ] .reasonix/skills/wf-developer/SKILL.md
-- [ ] .reasonix/skills/wf-tester/SKILL.md
-- [ ] .reasonix/skills/wf-reviewer/SKILL.md
-- [ ] .reasonix/skills/wf-deployer/SKILL.md
+- [ ] skills/wf-orchestrator/SKILL.md
+- [ ] skills/wf-orchestrator-engine/SKILL.md
+- [ ] skills/wf-architect/SKILL.md
+- [ ] skills/wf-developer/SKILL.md
+- [ ] skills/wf-tester/SKILL.md
+- [ ] skills/wf-reviewer/SKILL.md
+- [ ] skills/wf-deployer/SKILL.md
 - [ ] AGENTS.md 鍖呭惈杩涘害妫€鏌ヨ鍒?```
 
 ### 姝ラ7锛氭姤鍛婄粨鏋?
@@ -95,7 +95,7 @@ MIMO_API_KEY=sk-xxxxx         # 澶氭ā鎬佸垎鏋愮敤锛堝彲閫夛級
 
 ### 1. 鎷夊彇鏈€鏂版妧鑳?```powershell
 git clone --depth 1 https://github.com/TonyQ-AI/workflow-task.git $env:TEMP/rw-upgrade
-Copy-Item -Recurse "$env:TEMP/rw-upgrade/skills/*" ".reasonix/skills/" -Force
+Copy-Item -Recurse "$env:TEMP/rw-upgrade/skills/*" "skills/" -Force
 ```
 
 ### 2. 鏇存柊 MCP 閰嶇疆锛堝叧閿慨澶嶏級
