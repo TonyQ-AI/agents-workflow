@@ -46,7 +46,7 @@ name    = "mimo-multimodal"
 command = "npx"
 args    = ["-y", "tonyq-mimo-mcp-server"]
 env     = {
-  MIMO_API_URL  = "https://api.xiaomimimo.com/v1/chat/completions",
+  MIMO_API_URL = "${MIMO_API_URL:-https://api.xiaomimimo.com/v1/chat/completions}",
   MIMO_API_KEY = "${MIMO_API_KEY}"
 }
 call_timeout_seconds = 600
