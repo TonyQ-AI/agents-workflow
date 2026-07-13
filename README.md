@@ -40,9 +40,11 @@ Workflow-Dualmode（双模式 · 40 技能 · 自适应）
 
 ## 更新日志
 
-### v4.1.4（2026-07-13）— 引擎技能修复
+### v4.1.4（2026-07-13）— 引擎修复 + 文档补全
 
 - 修复 `wf-orchestrator-engine/SKILL.md` YAML 前页缺少闭合 `---` 分隔符
+- 修复 `workflow-installer` 仓库 URL，全部指向 `Workflow-Dualmode`
+- 补齐缺失文档：WORKFLOW_MANUAL.md、INSTALL.md、LICENSE、.gitignore
 
 ### v4.1.3（2026-07-13）— 全平台适配
 

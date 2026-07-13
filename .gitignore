@@ -1,0 +1,11 @@
+# 本地配置
+.reasonix/
+
+# 工作流运行产物
+workflow/
+
+# 系统文件
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
