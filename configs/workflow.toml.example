@@ -1,5 +1,6 @@
 ﻿# Workspace-level configuration.
 # Merged with global config.
+# 安装时 installer 会自动检测正确的 MIMO_API_URL，无需手动修改。
 
 [sandbox]
 workspace_root = "F:\\projects"   # allow file writes under F:\\projects
@@ -10,4 +11,4 @@ network = true
 name    = "mimo-multimodal"
 command = "npx"
 args    = ["-y", "tonyq-mimo-mcp-server"]
-env     = { MIMO_API_URL = "<安装时自动检测>", MIMO_API_KEY = "${MIMO_API_KEY}" }
+env     = { MIMO_API_URL = "https://api.xiaomimimo.com/v1/chat/completions", MIMO_API_KEY = "${MIMO_API_KEY}" }
