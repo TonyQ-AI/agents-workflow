@@ -1,4 +1,4 @@
-# Reasonix Workflow 安装指南
+# Workflow Task 安装指南
 
 > 一键安装/升级多Agent协同开发工作流 · 40 个技能 · 13 阶段
 
@@ -6,7 +6,7 @@
 
 ## 快速安装
 
-在 Reasonix 对话中输入：
+在 AI 对话中输入：
 
 ```
 装工作流
@@ -14,7 +14,7 @@
 
 AI 会自动克隆本仓库（https://github.com/TonyQ-AI/workflow-task）并完成全部安装。
 
-或者直接说 `/reasonix-workflow` 也能触发安装。
+或者直接说 `/Workflow Task-workflow` 也能触发安装。
 
 ---
 
@@ -28,11 +28,11 @@ git clone --depth 1 https://github.com/TonyQ-AI/workflow-task.git
 
 ### 2. 配置技能路径
 
-在 `reasonix.toml` 中添加：
+在 `Workflow Task.toml` 中添加：
 
 ```toml
 [skills]
-paths = ["reasonix-workflow/skills"]
+paths = ["Workflow Task-workflow/skills"]
 ```
 
 ### 3. 配置 MCP 服务器
@@ -51,7 +51,7 @@ call_timeout_seconds = 600
 
 ### 4. 配置 API 密钥
 
-在 `~/.reasonix/.env` 中添加：
+在 `~/.Workflow Task/.env` 中添加：
 
 ```env
 DEEPSEEK_API_KEY=sk-xxxxxxxxxx    # 工作流推理（必填）
@@ -71,7 +71,7 @@ MIMO_API_KEY=sk-xxxxxxxxxx         # 多模态分析（推荐）
 
 ### 6. 重启生效
 
-重启 Reasonix 使新技能和 MCP 配置生效。
+重启 Workflow Task 使新技能和 MCP 配置生效。
 
 ---
 
@@ -114,7 +114,7 @@ AI 会自动执行：
 
 | 组件 | 要求 |
 |------|------|
-| Reasonix | 桌面版（支持 task 子Agent） |
+| Workflow Task | 桌面版（支持 task 子Agent） |
 | npx | Node.js >= 18，用于运行 `tonyq-mimo-mcp-server` |
 | API Key | DeepSeek（工作流推理）+ MiMo（多模态，可选） |
 | 网络 | 可访问 github.com 和 npmjs.com |
@@ -137,7 +137,7 @@ AI 会自动执行：
 - 重启清除 MCP 缓存即可
 
 ### wf-orchestrator 没反应
-- 确认 .reasonix/skills/ 下有 `wf-orchestrator` 和 `wf-orchestrator-engine`
+- 确认 .Workflow Task/skills/ 下有 `wf-orchestrator` 和 `wf-orchestrator-engine`
 - 确认 AGENTS.md 存在
 - 确认 DeepSeek API key 有效
 
