@@ -12,7 +12,7 @@
 装工作流 github.com/TonyQ-AI/reasonix-workflow
 ```
 
-AI 会自动克隆本仓库并完成全部安装。
+AI 会自动克隆本仓库（https://github.com/TonyQ-AI/workflow-task）并完成全部安装。
 
 或者直接说 `github.com/TonyQ-AI/reasonix-workflow` 也能触发安装。
 
@@ -23,7 +23,7 @@ AI 会自动克隆本仓库并完成全部安装。
 ### 1. 克隆本仓库
 
 ```bash
-git clone --depth 1 https://github.com/TonyQ-AI/reasonix-workflow.git
+git clone --depth 1 https://github.com/TonyQ-AI/workflow-task.git
 ```
 
 ### 2. 配置技能路径
@@ -145,6 +145,6 @@ AI 会自动执行：
 
 ## 相关链接
 
-- GitHub 仓库：https://github.com/TonyQ-AI/reasonix-workflow
-- 插件包（其他工具用）：https://github.com/TonyQ-AI/workflow-plugin
+- GitHub 仓库：https://github.com/TonyQ-AI/workflow-task
+- 插件包（其他工具用）：https://github.com/TonyQ-AI/workflow-task-plugin
 - MiMo MCP 包：https://www.npmjs.com/package/tonyq-mimo-mcp-server
