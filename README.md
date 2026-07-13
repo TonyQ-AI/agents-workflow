@@ -2,7 +2,7 @@
 
 > 多Agent协同开发工作流 · 双模式 · 自动检测 task 可用性 · 40 个技能
 
-[![Version](https://img.shields.io/badge/version-4.1.4-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-4.1.5-blue)](VERSION)
 [![Skills](https://img.shields.io/badge/skills-40-green)](skills/)
 
 ## 双模式自动切换
@@ -39,6 +39,16 @@ Workflow-Dualmode（双模式 · 40 技能 · 自适应）
 ```
 
 ## 更新日志
+
+### v4.1.5（2026-07-13）— 架构评审修复
+
+- **参数传递修复**：`--parallel` 和 `--timeout` 参数补传入引擎 JSON
+- **进度映射修复**：engine progress.md 标签映射表 emoji 乱码恢复
+- **并行竞态修复**：任务5 并行模式加 `CHANGES.md` 存在检查，防止 tester 空跑
+- **引擎清理**：删除重复身份描述段落
+- **deployer 输入补全**：显式传入工作流目录和上游产出路径
+- **文件名对齐**：arch-review SKILL.md 产出文件名与引擎 `03-arch-review.md` 一致
+- **品牌清理**：29 处 Reasonix 品牌名替换为中性表述
 
 ### v4.1.4（2026-07-13）— 引擎修复 + 文档补全
 

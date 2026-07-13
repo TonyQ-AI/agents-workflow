@@ -1,6 +1,6 @@
-# Workflow Dualmode — 完整技术手册 v4.1.4
+# Workflow Dualmode — 完整技术手册 v4.1.5
 
-> 版本：4.1.4 · 最后更新：2026-07-13
+> 版本：4.1.5 · 最后更新：2026-07-13
 
 ---
 
@@ -376,6 +376,16 @@ npm 发布版 v0.1.2 将所有工具名加了 `mimo_` 前缀（`understand_image
 
 ## 12. v4.x 版本演进
 
+### v4.1.5 (2026-07-13) — 架构评审修复
+
+- 修复 `--parallel` 和 `--timeout` 参数未传入引擎 JSON 的 bug
+- 修复 engine progress.md 标签映射表 emoji 乱码
+- 修复并行模式下 tester 读取 CHANGES.md 的竞态问题
+- 删除 engine 重复身份描述段落
+- deployer 任务补全上游产出文件路径传入
+- arch-review 产出文件名对齐引擎 `03-arch-review.md`
+- 全面清理 Reasonix 品牌名，实现品牌中性化
+
 ### v4.1.4 (2026-07-13) — 引擎修复
 
 - 修复 `wf-orchestrator-engine/SKILL.md` YAML 前页缺少闭合 `---` 分隔符
@@ -413,4 +423,4 @@ npm 发布版 v0.1.2 将所有工具名加了 `mimo_` 前缀（`understand_image
 
 ---
 
-> 版本: 4.1.4 · 最后更新: 2026-07-13
+> 版本: 4.1.5 · 最后更新: 2026-07-13
