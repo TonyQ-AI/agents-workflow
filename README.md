@@ -7,21 +7,25 @@
 
 ## 双模式自动切换
 
-本工作流自动检测平台能力，无需手动选择：
+本工作流自动检测coding工具能力，无需手动选择：
 
 | 模式 | 条件 | 子 Agent | 并行 | 适用工具 |
 |------|------|:------:|:----:|---------|
-| **正常模式** | task 工具可用 | 独立会话派发 | ✅ | 支持 task 的工具 |
-| **inline 模式** | task 不可用 | 编排器亲自完成 | ❌ | Claude Code / Cursor / 其他 |
+| **正常模式** | task 工具可用 | 独立会话派发 | ✅ | 如Reasonix等支持 task 的工具 |
+| **inline 模式** | task 不可用 | 编排器亲自完成 | ❌ | Claude Code / Cursor / 其他 等不支持task的工具|
 
-> 两种模式功能完全一致（12 项任务全覆盖），inline 模式仅执行速度略慢。详见 [技术手册 §5](WORKFLOW_MANUAL.md#5-双模式自动切换)。
+> 两种模式功能一致，仅子agent调度方式不同（12 项任务全覆盖），inline 模式仅执行速度略慢。详见 [技术手册 §5](WORKFLOW_MANUAL.md#5-双模式自动切换)。
 
 ## 安装
 
 ```
-装工作流
+大白话告诉你的ai： 帮我装工作流  https://github.com/TonyQ-AI/agents-workflow
 ```
+## 更新
 
+```
+大白话告诉你的ai： 帮我更新工作流
+```
 ## 使用
 
 ```
@@ -29,6 +33,7 @@
 /wf-orchestrator 项目名: 需求描述 --lite
 /wf-orchestrator 项目名: 需求描述 --from coding
 ```
+详见 [技术手册 §5](WORKFLOW_MANUAL.md#5-双模式自动切换)
 
 ## 项目关系
 
