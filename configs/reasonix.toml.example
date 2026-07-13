@@ -1,14 +1,13 @@
 ﻿# Workspace-level Reasonix configuration.
-# Merged with F:\ReasonixTest\config.toml (global config).
 
 [sandbox]
-workspace_root = "F:\\projects"   # allow file writes under F:\\projects
+workspace_root = "F:\\projects"
 bash    = "off"
 network = true
 
 [[plugins]]
 name    = "mimo-multimodal"
 command = "npx"
-args    = ["tonyq-mimo-mcp-server", "--", "mimo-mcp-server"]
+args    = ["-y", "tonyq-mimo-mcp-server"]
 env     = { MIMO_API_URL = "https://api.xiaomimimo.com/v1/chat/completions", MIMO_API_KEY = "${MIMO_API_KEY}" }
-
+call_timeout_seconds = 600
