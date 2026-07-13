@@ -3,7 +3,7 @@ name: reasonix-domain-modeling
 description: "领域建模技能——当需要从需求中提取领域模型、定义实体和边界、建立通用语言时使用。在架构设计之前执行领域建模。"
 ---
 
-# Reasonix 领域建模
+# 领域建模
 
 ## 概述
 

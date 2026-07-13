@@ -3,7 +3,7 @@ name: reasonix-handoff
 description: "会话交接技能——当需要把当前对话的上下文（进度、发现、决策）打包交接给另一个 AI 会话或另一个开发者时使用。"
 ---
 
-# Reasonix 会话交接
+# 会话交接
 
 ## 概述
 

@@ -1,11 +1,11 @@
 ---
 name: reasonix-workflow
-description: "一键安装 Reasonix 全流程开发工作流——说「装工作流」自动搞定"
+description: "一键安装 Workflow Dualmode 工作流——说「装工作流」自动搞定"
 ---
 
-# Reasonix Workflow 一键安装器
+# Workflow 一键安装器
 
-当用户说「装工作流」、`安装 Reasonix 工作流`、`/reasonix-workflow` 时，按以下步骤执行。
+当用户说「装工作流」、`安装 Workflow Dualmode`、`/reasonix-workflow` 时，按以下步骤执行。
 
 **如果用户说「升级工作流」**，跳转到最后的「一键升级」部分。
 
@@ -92,7 +92,7 @@ MIMO_API_KEY=sk-xxxxx         # 多模态分析用（可选）
 ### 步骤7：报告结果
 
 ```
-✅ Reasonix 全流程开发工作流安装完成！
+✅ Workflow Dualmode 工作流安装完成！
 
 已安装 40 个技能：
   📋 核心工作流  — 8 个（编排器+引擎+6子Agent）
