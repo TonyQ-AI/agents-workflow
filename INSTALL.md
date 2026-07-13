@@ -35,7 +35,9 @@ paths = ["agents-workflow/skills"]
 | 模式 | 条件 | 执行方式 |
 |------|------|---------|
 | **正常模式** | task 工具可用 | 编排器 → task(引擎 subagent) → task(子Agent) |
+| | | 适用：Reasonix、ZCode 等 |
 | **inline 模式** | task 不可用 | 编排器直接执行所有阶段 |
+| | | 适用：Claude Code、Cursor、通用 LLM 对话 等 |
 
 ---
 
