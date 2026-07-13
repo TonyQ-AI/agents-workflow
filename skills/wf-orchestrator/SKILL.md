@@ -71,6 +71,7 @@ MediaManager: 重构用户模块 --lite
    - 如果包含 `--from`，提取起始阶段存入 `$FROM_PHASE`
    - 如果包含 `--to`，提取结束阶段存入 `$TO_PHASE`
    - 如果包含 `--model`，提取模型覆盖值存入 `$MODEL_OVERRIDE`
+   - 如果包含 `--parallel`，设置 `$PARALLEL=true`，否则 `$PARALLEL=false`
    - 初始化 `$FALLBACK=false`
 
 2. **检查基础设施**：
@@ -236,12 +237,14 @@ task(
   "from_phase": "{FROM_PHASE}",
   "to_phase": "{TO_PHASE}",
   "lite": $LITE,
+  "parallel": $PARALLEL,
   "fallback": false,
   "no_superpowers": $NO_SUPERPOWERS,
-  "model_override": "{MODEL_OVERRIDE}"
+  "model_override": "{MODEL_OVERRIDE}",
+  "timeout": $TIMEOUT
 }''',
   model="deepseek/deepseek-v4-pro",
-  timeout=600
+  timeout=$TIMEOUT
 )
 ```
 

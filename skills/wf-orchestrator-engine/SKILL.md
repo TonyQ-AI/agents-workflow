@@ -7,8 +7,6 @@ runAs: subagent
 
 # wf-orchestrator-engine — 工作流执行引擎
 
-你是工作流的执行引擎 Subagent。你在独立上下文中执行，不受父会话上下文限制。接收编排器传来的 JSON 包裹，按清单依次完成以下 12 项任务。
-
 ## 接收参数
 
 通过 `arguments` 传入以下参数（JSON 格式）：
@@ -53,17 +51,17 @@ runAs: subagent
 **progress.md 标签映射**（更新进度时使用）：
 | checkpoint值 | progress.md行标签 |
 |-------------|-----------------|
-| domain_modeling | ??? 领域建模 |
-| architecture | ???? 架构 |
-| arch_review | ???? 架构评审 |
-| coding | ??? 编码 |
-| testing | ??? 测试 |
-| arch_scan | ??? 架构扫描 |
-| review | ??? 审查 |
-| deploy | ??? 部署 |
-| doc_check | ??? 文档检查 |
-| branch_finish | ??? 分支收尾 |
-| version_tracking | ??? 版本登记 |
+| domain_modeling | 🧩 领域建模 |
+| architecture | 🏗️ 架构 |
+| arch_review | 🏛️ 架构评审 |
+| coding | 💻 编码 |
+| testing | 🧪 测试 |
+| arch_scan | 🔬 架构扫描 |
+| review | 🔍 审查 |
+| deploy | 🚀 部署 |
+| doc_check | 📖 文档检查 |
+| branch_finish | 🌿 分支收尾 |
+| version_tracking | 📊 版本登记 |
 
 ## 模型分配
 
@@ -245,7 +243,7 @@ task(
 
 > 如果 `from_phase` 在审查或之后，跳过此任务
 
-- **并行等待**：若 `parallel=true` 且任务4已启动测试，等待其完成，跳过本任务的 task 调用。否则正常执行。
+- **并行等待**：若 `parallel=true` 且任务4已启动测试，**先等待** `{session_dir}/03-implementation/CHANGES.md` 存在后再开始测试（编码与测试并行启动，但测试需等编码有产出后才能执行），等待其完成，跳过本任务的 task 调用。否则正常执行。
 
 - 输出阶段信息：**>>> 测试阶段**
 - 注入 `verification-before-completion` 方法论：所有测试结论必须有命令输出作为证据
@@ -306,8 +304,11 @@ task(
 - 输出阶段信息：**>>> 部署阶段**
 - 如果 `fallback=true`，由编排器自行完成部署方案
 - 否则，使用 `task` 启动部署子Agent（模型：DeepSeek Flash），传入：
+   - 项目根目录 `{code_path}`
+   - 工作流目录 `{session_dir}`
    - 部署目标：根据 `{code_path}` 检测项目类型（web/CLI/库），默认 development
    - 构建命令：Go 项目用 `go build`，Node 项目用 `npm run build`，依此类推
+   - 子Agent 可自行读取上游产出：`{session_dir}/02-design.md`、`{session_dir}/03-implementation/CHANGES.md`、`{session_dir}/04-test/TEST_REPORT.md`、`{session_dir}/05-review.md`
 - 等待子Agent完成
 - 验证 `{session_dir}/06-deploy/DEPLOY.md` 已生成
 - 更新进度 → 「🚀 部署」✅ 已完成

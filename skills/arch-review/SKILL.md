@@ -267,7 +267,7 @@ graph TD
 ```
 wf-architect → 输出 02-design.md
                    ↓
-arch-review → 输出 ARCH_REVIEW.md
+arch-review → 输出 03-arch-review.md
                    ↓
                   根据评分决定走向：
                     🟢 ≥18 → 进入开发阶段
@@ -283,7 +283,7 @@ wf-developer → 开始编码
 
 ```
 docs/superpowers/plans/
-├── ARCH_REVIEW.md          ← 本技能产出
+├── 03-arch-review.md          ← 本技能产出
 ├── findings.md             ← 发现的架构问题会追加到这里
 └── task_plan.md            ← 如需修复架构问题，生成修复任务
 ```
