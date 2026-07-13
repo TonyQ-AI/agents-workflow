@@ -1,11 +1,11 @@
 ---
 name: workflow-installer
-description: "一键安装 workflow 全流程开发工作流——说「装工作流」自动搞定"
+description: "agents-workflow 安装器——用户提供仓库地址即可自动完成全部安装配置"
 ---
 
-# workflow Workflow 一键安装器
+# agents-workflow 安装器
 
-当用户说「装工作流」、「安装 workflow 工作流」、「/agents-workflow」时，按以下步骤执行。
+当用户说「装工作流」、「安装 agents-workflow」时触发。用户需提供仓库地址（默认 `github.com/TonyQ-AI/agents-workflow`）。
 
 **默认仓库地址**：`https://github.com/TonyQ-AI/agents-workflow`
 
