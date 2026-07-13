@@ -9,22 +9,18 @@
 在 Reasonix 对话中输入：
 
 ```
-/install-capability https://github.com/TonyQ-AI/workflow-plugin --mode register
-```
-
-或者直接说：
-
-```
 装工作流
 ```
 
-AI 会自动完成全部安装。
+AI 会自动克隆本仓库并完成全部安装。
+
+或者直接说 `/reasonix-workflow` 也能触发安装。
 
 ---
 
 ## 手动安装
 
-### 1. 克隆仓库
+### 1. 克隆本仓库
 
 ```bash
 git clone --depth 1 https://github.com/TonyQ-AI/reasonix-workflow.git
@@ -149,6 +145,6 @@ AI 会自动执行：
 
 ## 相关链接
 
-- 工作流本体：https://github.com/TonyQ-AI/reasonix-workflow
-- 插件包：https://github.com/TonyQ-AI/workflow-plugin
+- GitHub 仓库：https://github.com/TonyQ-AI/reasonix-workflow
+- 插件包（其他工具用）：https://github.com/TonyQ-AI/workflow-plugin
 - MiMo MCP 包：https://www.npmjs.com/package/tonyq-mimo-mcp-server
