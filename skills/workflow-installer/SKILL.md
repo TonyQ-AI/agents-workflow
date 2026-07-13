@@ -142,15 +142,44 @@ call_timeout_seconds = 600
 
 ## 一键升级（针对已安装用户）
 
-当用户说「升级工作流」时，自动执行以下操作：
+当用户说「升级工作流」时，按以下步骤执行。
 
-### 1. 拉取最新技能
+### 步骤0：检测旧版本并告知迁移（必须执行）
+
+⚠️ **此步骤是强制交互。未完成前，禁止继续升级。**
+
+检查以下特征判断用户是否使用旧版：
+- 技能路径包含 `reasonix-workflow` 或 `workflow-task`
+- 技能目录在 `.reasonix/skills/` 下
+- MCP 配置使用 `mimo-mcp-server`（而非 `tonyq-mimo-mcp-server`）
+
+> 如果检测到旧版，**必须先展示迁移说明**，等待用户确认后再继续：
+>
+> 📢 **工作流已升级为 agents-workflow！**
+>
+> 旧版 `reasonix-workflow` 已整合为全新 `agents-workflow`，主要变化：
+> - 🏷️ **去品牌化**：Reasonix 品牌名已全面移除，改为中性名称
+> - 🔀 **双模式自适应**：有 task 用正常模式，没有自动 fallback inline，所有工具都能用
+> - 🛠️ **MCP 修复**：MiMo 迁移至 `tonyq-mimo-mcp-server`，修复 401/404 问题
+> - 📦 **仓库迁移**：新地址 `github.com/TonyQ-AI/agents-workflow`（旧地址自动跳转）
+>
+> 是否继续升级？
+> - 用户确认 → 继续步骤1
+> - 用户拒绝 → 终止升级，保持旧版
+
+> 如果未检测到旧版（已是新版），跳过此步骤，直接进入步骤1。
+
+### 步骤1：拉取最新技能
 ```powershell
 git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git $env:TEMP/rw-upgrade
+# 清理旧版残留
+if (Test-Path ".reasonix") { Remove-Item -Recurse -Force ".reasonix" }
+if (Test-Path "reasonix-workflow") { Remove-Item -Recurse -Force "reasonix-workflow" }
+if (Test-Path "workflow-task") { Remove-Item -Recurse -Force "workflow-task" }
 Copy-Item -Recurse "$env:TEMP/rw-upgrade/skills/*" ".workflow/skills/" -Force
 ```
 
-### 2. 更新 MCP 配置（关键修复）
+### 步骤2：更新 MCP 配置（关键修复）
 ```powershell
 $configPath = "workflow.toml"
 if (Test-Path $configPath) {
@@ -163,27 +192,36 @@ if (Test-Path $configPath) {
 }
 ```
 
-### 3. 清除 MCP 缓存
+### 步骤3：清除 MCP 缓存
 ```powershell
 $cacheFile = "$env:LOCALAPPDATA\workflow\mcp\mimo-multimodal.json"
 if (Test-Path $cacheFile) { Remove-Item $cacheFile -Force; Write-Output "MCP 缓存已清除" }
 ```
 
-### 4. 更新 AGENTS.md
+### 步骤4：更新 AGENTS.md
 ```powershell
 $agentsCheck = Select-String -Path "AGENTS.md" -Pattern "进度检查规则" -SimpleMatch -ErrorAction SilentlyContinue
 if (-not $agentsCheck) { Add-Content -Path "AGENTS.md" -Value "`n## 进度检查规则`n在任何操作开始之前，检查 docs/superpowers/plans/task_plan.md 是否存在。`n如果存在，读取它以了解当前执行进度。" }
 ```
 
-### 5. 报告升级结果
+### 步骤5：报告升级结果
 ```
-工作流升级完成！
+🎉 工作流升级完成！已从 reasonix-workflow 迁移至 agents-workflow！
+
+✨ 新版本变化：
+  🏷️  品牌中性化 — Reasonix 品牌名已全面移除
+  🔀 双模式自适应 — 有 task 用正常模式，没有自动 fallback inline
+  🛠️ MCP 修复 — mimo-mcp-server → tonyq-mimo-mcp-server（修复 401/404）
+  📦 新仓库 — github.com/TonyQ-AI/agents-workflow
+
+📋 技术细节：
   技能已更新到最新版（40 个）
   MCP 配置：mimo-mcp-server → tonyq-mimo-mcp-server
   环境变量：MIMO_API_BASE → MIMO_API_URL（带 /chat/completions）
+  旧版残留已清理
   MCP 缓存已清除
 
-请重启 workflow 使新配置生效
+请重启工具使新配置生效
 ```
 
 ## 注意事项
@@ -191,5 +229,5 @@ if (-not $agentsCheck) { Add-Content -Path "AGENTS.md" -Value "`n## 进度检查
 - 安装前会检测是否已存在技能，不覆盖用户自定义修改
 - AGENTS.md 以追加方式写入，不覆盖已有内容
 - 如果 git clone 失败会自动切到 ZIP 下载模式
-- 安装完成后**建议重启 workflow** 使新技能生效
+- 安装完成后**建议重启工具** 使新配置生效
 - MiMo MCP 需要 `MIMO_API_KEY` 环境变量（存 `.env` 不硬编码）
