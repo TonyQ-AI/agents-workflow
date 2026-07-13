@@ -2,7 +2,7 @@
 
 > 多Agent协同开发工作流 · 双模式自适应 · 40 个技能 · 全平台兼容
 
-[![Version](https://img.shields.io/badge/version-4.1.6-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-4.1.7-blue)](VERSION)
 [![Skills](https://img.shields.io/badge/skills-40-green)](skills/)
 
 ## 双模式自动切换
@@ -44,6 +44,13 @@ agents-workflow（新版 · 双模式 · 40 技能 · 自适应）
 ```
 
 ## 更新日志
+
+### v4.1.7（2026-07-13）— 升级迁移体验
+
+- **升级检测**：自动检测旧版 `reasonix-workflow` / `workflow-task`，展示迁移说明
+- **升级交互**：告知用户去品牌化、双模式、MCP 修复、仓库迁移等变化后确认升级
+- **旧版清理**：升级时自动清理 `.reasonix`、`reasonix-workflow`、`workflow-task` 残留
+- **升级报告**：迁移风格报告，突出新版本变化
 
 ### v4.1.6（2026-07-13）— 安装体验优化
 
