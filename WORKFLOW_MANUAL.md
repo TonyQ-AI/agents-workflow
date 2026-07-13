@@ -338,11 +338,6 @@ MCP Server 源码通过 `process.env.MIMO_API_URL` 读取 API 地址，默认值
 npm 发布版 v0.1.2 将所有工具名加了 `mimo_` 前缀（`understand_image` → `mimo_understand_image`），但 Reasonix 缓存文件仍用旧名。调用时名字不匹配，MCP Server 返回 `read: EOF`。修复方式：
 1. 更新缓存文件中 7 个工具名匹配新名
 2. 重新发布 npm 包时保持工具名一致
-
-**为什么配置文件不能直接写 key？**
-
-`redact_tool_output` 安全机制会自动将显示中的密钥替换为 `*`。如果直接复制显示中的 key（带星号）写入配置文件，实际传入的是带星号的无效 key。必须通过环境变量引用（`${MI*******KEY}`）或使用脚本从 `.env` 文件读取写入。
-
 ---
 
 ## 11. 技能目录
