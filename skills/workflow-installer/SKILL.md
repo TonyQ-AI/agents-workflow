@@ -165,7 +165,7 @@ call_timeout_seconds = 600
 > 📢 **工作流已升级为 agents-workflow！**
 >
 > 旧版 `reasonix-workflow` 已整合为全新 `agents-workflow`，主要变化：
-> - 🏷️ **去品牌化**：Reasonix 品牌名已全面移除，改为中性名称
+> - 🏷️ **不再依赖单一工具**：品牌中性化，支持所有 AI coding 工具
 > - 🔀 **双模式自适应**：有 task 用正常模式，没有自动 fallback inline，所有工具都能用
 > - 🛠️ **MCP 修复**：MiMo 迁移至 `tonyq-mimo-mcp-server`，修复 401/404 问题
 > - 📦 **仓库迁移**：新地址 `github.com/TonyQ-AI/agents-workflow`（旧地址自动跳转）
@@ -186,18 +186,19 @@ if (Test-Path "workflow-task") { Remove-Item -Recurse -Force "workflow-task" }
 Copy-Item -Recurse "$env:TEMP/rw-upgrade/skills/*" ".workflow/skills/" -Force
 ```
 
-### 步骤2：更新 MCP 配置（关键修复）
-```powershell
-$configPath = "workflow.toml"
-if (Test-Path $configPath) {
-    $content = Get-Content $configPath -Raw
-    $content = $content -replace 'mimo-mcp-server', 'tonyq-mimo-mcp-server'
-    $content = $content -replace 'MIMO_API_BASE', 'MIMO_API_URL'
-    $content = $content -replace 'MIMO_API_URL = "https://api.xiaomimimo.com/v1"', 'MIMO_API_URL = "https://api.xiaomimimo.com/v1/chat/completions"'
-    Set-Content -Path $configPath -Value $content -NoNewline
-    Write-Output "MCP 配置已升级"
-}
-```
+### 步骤2：更新 MCP 配置（先测试端点，再写正确配置）
+
+⚠️ **不要盲替换 URL。读取现有 key，测试两个端点，哪个通写哪个。**
+
+1. 读取现有 `workflow.toml`（或对应工具配置）
+2. 提取已有的 `MIMO_API_KEY`（如果存在）
+3. 修正包名：`mimo-mcp-server` → `tonyq-mimo-mcp-server`
+4. 修正环境变量名：`MIMO_API_BASE` → `MIMO_API_URL`
+5. 用现有 key 测试两个端点（同安装流程第三步）：
+   - 先测 `api.xiaomimimo.com/v1/chat/completions` → 200 就写入
+   - 不通 → 测 `token-plan-cn.xiaomimimo.com/v1/chat/completions` → 200 就写入
+   - 两个都不通 → 保留现有 URL 不做修改，提示用户检查 key
+6. 写入正确定位到的 URL
 
 ### 步骤3：清除 MCP 缓存
 ```powershell
@@ -216,7 +217,7 @@ if (-not $agentsCheck) { Add-Content -Path "AGENTS.md" -Value "`n## 进度检查
 🎉 工作流升级完成！已从 reasonix-workflow 迁移至 agents-workflow！
 
 ✨ 新版本变化：
-  🏷️  品牌中性化 — Reasonix 品牌名已全面移除
+  🏷️  不再依赖单一工具 — 品牌中性化，支持所有 AI coding 工具
   🔀 双模式自适应 — 有 task 用正常模式，没有自动 fallback inline
   🛠️ MCP 修复 — mimo-mcp-server → tonyq-mimo-mcp-server（修复 401/404）
   📦 新仓库 — github.com/TonyQ-AI/agents-workflow
