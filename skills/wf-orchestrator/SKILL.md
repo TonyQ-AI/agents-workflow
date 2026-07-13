@@ -71,6 +71,12 @@ MediaManager: 重构用户模块 --lite
    - 如果包含 `--from`，提取起始阶段存入 `$FROM_PHASE`
    - 如果包含 `--to`，提取结束阶段存入 `$TO_PHASE`
    - 如果包含 `--model`，提取模型覆盖值存入 `$MODEL_OVERRIDE`
+   - 初始化 `$FALLBACK=false`
+
+2. **检查基础设施**：
+   - 尝试调用 `task` 工具（简单测试），如果不可用则设置 `$FALLBACK=true`
+   - 如果 `$FALLBACK=true`：输出「⚠️ 兜底模式 — task 不可用，编排器直接执行所有阶段」
+   - 如果 `$FALLBACK=false`：输出「✅ 正常模式 — 通过 task 派发子Agent」
 
 2. 在项目根目录创建 `workflow/` 目录（如不存在）
 
@@ -146,7 +152,7 @@ MediaManager: 重构用户模块 --lite
      "started_at": "{时间戳}",
      "last_completed_phase": "init",
      "lite_mode": $LITE,
-     "fallback_mode": false,
+     "fallback_mode": $FALLBACK,
      "from_phase": "{FROM_PHASE}",
      "to_phase": "{TO_PHASE}",
      "model_override": "{MODEL_OVERRIDE}",
@@ -185,13 +191,33 @@ MediaManager: 重构用户模块 --lite
 
 8. **写入 checkpoint**：更新 `last_completed_phase` 为 `"planning"`
 
-### 步骤3：启动执行引擎 Subagent
+### 步骤3：执行工作流
 
 > 如果 `--from` 或 `--to` 范围不包含执行阶段，跳过此步骤
 
-1. 输出阶段信息：**🟢 阶段 2/2：启动执行引擎 — wf-orchestrator-engine**
+**如果 `$FALLBACK=true`（兜底模式）：**
 
-2. 使用 `task` 工具启动执行引擎子Agent（模型：DeepSeek Pro），传入完整参数：
+1. 输出阶段信息：**🟢 阶段 2/2：兜底模式 — 编排器直接执行**
+2. 告知用户：「当前环境不支持 task 子Agent调用，所有阶段由编排器直接执行」
+3. 依次执行以下任务（参考 wf-orchestrator-engine 的 12 项任务流程）：
+   - 任务1：领域建模 → 读取 specs + task_plan，产出 domain-model.md
+   - 任务2：架构设计 → 产出 02-design.md
+   - 任务3：架构评审（硬门控）→ 产出 03-arch-review.md，No-Go 回退
+   - 任务4：编码 → 产出代码
+   - 任务5：测试 → 产出 TEST_REPORT.md
+   - 任务6：架构扫描（硬门控）→ 产出 architecture-scan.html
+   - 任务7：审查 → 产出 05-review.md
+   - 任务8：部署 → 产出 DEPLOY.md
+   - 任务9：文档检查 → 产出 doc-check-report.md
+   - 任务10：分支收尾 → git commit
+   - 任务11：版本登记 → .vt.json
+   - 任务12：总结 → SUMMARY.md
+4. 每个任务完成后更新 progress.md + findings.md + checkpoint
+
+**如果 `$FALLBACK=false`（正常模式）：**
+
+1. 输出阶段信息：**🟢 阶段 2/2：启动执行引擎 — wf-orchestrator-engine**
+2. 使用 `task` 工具启动执行引擎子Agent（模型：DeepSeek Pro），传入完整参数
 
 ```
 task(
