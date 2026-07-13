@@ -6,18 +6,15 @@
 
 ## 快速安装
 
-**方式一：让 AI 安装（推荐）**
-
 把下面这句话发给你的 AI：
 
 ```
-请帮我安装 agents-workflow：
-git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git
-然后把 skills/ 下的所有技能注册到技能系统。
-配置 MCP 时用 npx -y tonyq-mimo-mcp-server，安装器会自动检测 MiMo 端点。
+帮我安装 agents-workflow，仓库是 github.com/TonyQ-AI/agents-workflow
 ```
 
-**方式二：手动安装**
+AI 会自动完成全部配置（包括 MiMo 端点检测）。
+
+**手动安装：**
 
 ```bash
 git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git

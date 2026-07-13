@@ -18,32 +18,15 @@
 
 ## 安装
 
-**方式一：让 AI 帮你装（推荐）**
-
-把下面这句话发给你的 AI 工具：
+把下面这句话发给你的 AI：
 
 ```
-请帮我安装 agents-workflow：
-git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git
-然后把 skills 目录下的所有技能注册到你的技能系统中。
+帮我安装 agents-workflow，仓库是 github.com/TonyQ-AI/agents-workflow
 ```
 
-如果你的工具支持 skill 系统，AI 会自动完成配置。如果不支持，AI 会告诉你怎么手动配。
+AI 会自动完成 clone、注册技能、配置 MCP、检测 MiMo 端点等全部操作。
 
-**方式二：手动安装**
-
-```bash
-git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git
-```
-然后在工具配置中把 `skills` 路径指向克隆后的 `agents-workflow/skills/` 目录。
-
-**已安装旧版的用户**，对 AI 说：
-
-```
-升级工作流
-```
-
-AI 会自动检测旧版并完成迁移。
+已安装旧版的用户，对 AI 说「升级工作流」即可自动迁移。
 ## 使用
 
 ```
