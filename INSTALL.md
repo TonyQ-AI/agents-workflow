@@ -6,79 +6,29 @@
 
 ## 快速安装
 
-在 AI 对话中输入：
+**方式一：让 AI 安装（推荐）**
+
+把下面这句话发给你的 AI：
 
 ```
-装工作流
+请帮我安装 agents-workflow：
+git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git
+然后把 skills/ 下的所有技能注册到技能系统。
+配置 MCP 时用 npx -y tonyq-mimo-mcp-server，安装器会自动检测 MiMo 端点。
 ```
 
-在 AI 对话中输入（带仓库地址）：
-
-```
-装工作流 https://github.com/TonyQ-AI/agents-workflow
-```
-
-> 如果只说「装工作流」，AI 会默认使用官方仓库并跟你确认。
-
-或者直接说 `/agents-workflow` 也能触发安装。
-
----
-
-## 手动安装
-
-### 1. 克隆本仓库
+**方式二：手动安装**
 
 ```bash
 git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git
 ```
 
-### 2. 配置技能路径
-
-在工作流配置文件中添加：
+在工具配置中添加技能路径：
 
 ```toml
 [skills]
 paths = ["agents-workflow/skills"]
 ```
-
-### 3. 配置 MCP 服务器
-
-```toml
-[[plugins]]
-name    = "mimo-multimodal"
-command = "npx"
-args    = ["-y", "tonyq-mimo-mcp-server"]
-env     = {
-  MIMO_API_URL  = "https://api.xiaomimimo.com/v1/chat/completions",
-  MIMO_API_KEY  = "${MI*******KEY}"
-}
-call_timeout_seconds = 600
-```
-
-### 4. 配置 API 密钥
-
-在 `.env` 中添加：
-
-```env
-DEEPSEEK_API_KEY=sk-xxx***xxxx    # 工作流推理（必填）
-MIMO_API_KEY=sk-xxx***xxxx         # 多模态分析（推荐）
-```
-
-### 5. 添加 AGENTS.md
-
-在项目根目录创建 `AGENTS.md`：
-
-```markdown
-## 进度检查规则
-在任何操作开始之前，检查 docs/superpowers/plans/task_plan.md 是否存在。
-如果存在，读取它以了解当前执行进度。
-这一规则适用于所有对话，不论是否使用 wf-orchestrator 编排器。
-```
-
-### 6. 重启生效
-
-重启工作流使新技能和 MCP 配置生效。
-
 ---
 
 ## 双模式说明
@@ -164,5 +114,4 @@ AI 会自动执行：
 ## 相关链接
 
 - GitHub 仓库：https://github.com/TonyQ-AI/agents-workflow
-- 原版（task 专用）：https://github.com/TonyQ-AI/workflow-task
 - MiMo MCP 包：https://www.npmjs.com/package/tonyq-mimo-mcp-server
