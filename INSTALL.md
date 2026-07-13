@@ -12,9 +12,9 @@
 帮我安装 agents-workflow，仓库是 github.com/TonyQ-AI/agents-workflow
 ```
 
-AI 会自动完成全部配置（包括 MiMo 端点检测）。
+根据AI提示操作即可。
 
-**手动安装：**
+## 手动安装
 
 ```bash
 git clone --depth 1 https://github.com/TonyQ-AI/agents-workflow.git
