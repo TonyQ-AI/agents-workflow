@@ -1,6 +1,6 @@
-# Reasonix Workflow — 完整技术手册 v4.1.1
+# Reasonix Workflow — 完整技术手册 v4.1.2
 
-> 版本：4.1.1 · 最后更新：2026-07-13
+> 版本：4.1.2 · 最后更新：2026-07-13
 
 ---
 
@@ -295,8 +295,53 @@ Pro模型(架构/审查) Flash模型(编码/测试/部署)
 
 ## 10. MCP 多模态集成
 
-MiMo: npx tonyq-mimo-mcp-server (7个工具: 图片/音频/视频理解 + ASR + TTS + 音色设计 + 音色克隆)
-Baidu OCR: MCP SSE + REST API双模式
+### 10.1 当前配置
+
+```toml
+[[plugins]]
+name    = "mimo-multimodal"
+command = "npx"
+args    = ["-y", "tonyq-mimo-mcp-server"]
+env     = {
+  MIMO_API_URL  = "https://api.xiaomimimo.com/v1/chat/completions",
+  MIMO_API_KEY  = "${MI*******KEY}"
+}
+call_timeout_seconds = 600
+```
+
+**MiMo 工具清单（7个）：**
+
+| MCP 工具名 | 对应技能 | 用途 |
+|:-----------|:---------|:-----|
+| `mimo_understand_image` | mimo-image-understanding | 图片分析/OCR/UI审查 |
+| `mimo_understand_audio` | mimo-audio-understanding | 音频转写/理解 |
+| `mimo_understand_video` | mimo-video-understanding | 视频内容分析 |
+| `mimo_speech_recognition` | — | 语音识别(ASR) |
+| `mimo_speech_synthesis` | mimo-tts | 预置音色语音合成 |
+| `mimo_voice_design` | mimo-tts | 文本描述自定义音色 |
+| `mimo_voice_clone` | mimo-tts | 音频样本克隆音色 |
+
+### 10.2 v4.1.2 迁移说明
+
+**为什么从 `mimo-mcp-server` 换成 `tonyq-mimo-mcp-server`？**
+
+原 `mimo-mcp-server` 由第三方 alionsss 发布。npm 发布版（v0.1.2）的工具名加了 `mimo_` 前缀（如 `mimo_understand_image`），但 GitHub 源码未同步，仍然用旧名（`understand_image`）。导致 npx 拉到的版本和缓存文件不一致，MCP 连接断开。
+
+解决方案：fork 到 `TonyQ-AI/mimo-mcp-server`，修复源码对齐 npm 版，以 `tonyq-mimo-mcp-server` 名称发布到 npm，完全脱离对 alionsss 的依赖。
+
+**为什么 `MIMO_API_BASE` 改成 `MIMO_API_URL`？**
+
+MCP Server 源码通过 `process.env.MIMO_API_URL` 读取 API 地址，默认值是 Token Plan 端点（`token-plan-cn.xiaomimimo.com`）。如果用标准 API key 但配的是 `MIMO_API_BASE`，服务器读不到自定义地址，默认走 Token Plan 端点导致 401。
+
+**为什么工具名加了 `mimo_` 前缀？**
+
+npm 发布版 v0.1.2 将所有工具名加了 `mimo_` 前缀（`understand_image` → `mimo_understand_image`），但 Reasonix 缓存文件仍用旧名。调用时名字不匹配，MCP Server 返回 `read: EOF`。修复方式：
+1. 更新缓存文件中 7 个工具名匹配新名
+2. 重新发布 npm 包时保持工具名一致
+
+**为什么配置文件不能直接写 key？**
+
+Reasonix 的 `redact_tool_output` 安全机制会自动将显示中的密钥替换为 `*`。如果直接复制显示中的 key（带星号）写入配置文件，实际传入的是带星号的无效 key。必须通过环境变量引用（`${MI*******KEY}`）或使用脚本从 `.env` 文件读取写入。
 
 ---
 
@@ -308,16 +353,25 @@ Baidu OCR: MCP SSE + REST API双模式
 
 ## 12. v4.x 版本演进
 
-### v4.1 (2026-07-13) — 23项深度审查修复
+### v4.1.2 (2026-07-13) — MCP 独立发布
 
-- 任务清单替代阶段编号
-- 评分标准18/24统一
-- 回退上限3次
-- --to/--parallel/--timeout完整实现
-- fallback自检降级
-- 所有子Agent输入task_plan.md
-- 产物验证统一规范
-- 文档精简为4份
+**MCP 服务迁移**
+- 自建 npm 包 `tonyq-mimo-mcp-server`，脱离对 alionsss 的依赖
+- fork 源码到 TonyQ-AI，修复工具名对齐、构建 dist、bin 名统一
+- GitHUb 源码仓库：https://github.com/TonyQ-AI/mimo-mcp-server
+
+**环境变量修fux**
+- `MIMO_API_BASE` → `MIMO_API_URL`（MCP Server 实际读的是后者）
+- URL 补全 `/chat/completions` 路径（之前缺路径导致 404）
+- 配置文件禁止硬编码 key，改用 `${MIMO_API_KEY}` 环境变量引用（防止遮罩写错）
+
+**npx 参数修复**
+- bin 名从 `mimo-mcp-server` 改为 `tonyq-mimo-mcp-server`，与包名一致，npx 可直接找到入口
+- 配置示例更新为 `args = ["-y", "tonyq-mimo-mcp-server"]`（无需 `--` 分隔符）
+
+**一键安装/升级**
+- reasonix-workflow 安装器（`/reasonix-workflow`）新增升级模式
+- 说「升级工作流」自动拉最新技能 + 修复 MCP 配置 + 清除缓存
 
 ### v4.0 (2026-07-12) — 双引擎架构
 
@@ -336,4 +390,4 @@ Baidu OCR: MCP SSE + REST API双模式
 
 ---
 
-> 版本: 4.1 · 最后更新: 2026-07-13
+> 版本: 4.1.2 · 最后更新: 2026-07-13
