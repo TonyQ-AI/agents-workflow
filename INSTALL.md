@@ -125,7 +125,7 @@ AI 会自动执行：
 
 ### MCP 报 401 / 404
 - 确认 `MIMO_API_URL` 完整：`https://api.xiaomimimo.com/v1/chat/completions`
-- 确认 API key 在 `.env` 中正确（无星号）
+- 确认 API key 在 `.env` 中正确
 - 运行「升级工作流」自动修复配置
 
 ### npx 找不到包
