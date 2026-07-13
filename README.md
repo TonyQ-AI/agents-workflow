@@ -1,41 +1,51 @@
-# Multi-Agent Automated Workflow
+# Workflow Dualmode
 
-> 澶欰gent鍗忓悓寮€鍙戝叏娴佺▼鑷姩鍖栧伐浣滄祦 路 鍙屾ā寮?路 40 涓妧鑳?路 13 闃舵
+> 多Agent协同开发工作流 · 双模式 · 自动检测 task 可用性 · 40 个技能
 
-## 鍙屾ā寮忚嚜鍔ㄥ垏鎹?
-鏈伐浣滄祦鑷姩妫€娴嬪钩鍙拌兘鍔涳紝鏃犻渶鎵嬪姩閫夋嫨锛?
-| 妯″紡 | 鏉′欢 | 鎵ц鏂瑰紡 |
+## 双模式自动切换
+
+本工作流自动检测平台能力，无需手动选择：
+
+| 模式 | 条件 | 执行方式 |
 |------|------|---------|
-| **姝ｅ父妯″紡** | task 宸ュ叿鍙敤 | 缂栨帓鍣?鈫?task(寮曟搸 subagent) 鈫?task(瀛怉gent) |
-| **inline 妯″紡** | task 涓嶅彲鐢?| 缂栨帓鍣ㄧ洿鎺ユ墽琛屾墍鏈夐樁娈?|
+| **正常模式** | task 工具可用 | 编排器 → task(引擎 subagent) → task(子Agent) |
+| **inline 模式** | task 不可用 | 编排器直接执行所有阶段 |
 
-鍚姩鏃惰嚜鍔ㄨ緭鍑哄綋鍓嶆ā寮忥細
-```
-鉁?姝ｅ父妯″紡 鈥?閫氳繃 task 娲惧彂瀛怉gent
-鈿狅笍 inline 妯″紡 鈥?task 涓嶅彲鐢紝缂栨帓鍣ㄧ洿鎺ユ墽琛?```
-
-## 涓€鍙ヨ瘽瀹夎
+## 安装
 
 ```
-瑁呭伐浣滄祦
+装工作流
 ```
 
-## 浣跨敤
+## 使用
 
 ```
-/wf-orchestrator 椤圭洰鍚? 闇€姹傛弿杩?/wf-orchestrator 椤圭洰鍚? 闇€姹傛弿杩?--lite
-/wf-orchestrator 椤圭洰鍚? 闇€姹傛弿杩?--from coding
+/wf-orchestrator 项目名: 需求描述
+/wf-orchestrator 项目名: 需求描述 --lite
+/wf-orchestrator 项目名: 需求描述 --from coding
 ```
 
-## 椤圭洰鍏崇郴
+## 项目关系
 
 ```
-workflow-installer锛圧easonix 涓撶敤 路 40鎶€鑳斤級
-       鈫?鏀归€?workflow-inline锛堢函 inline 路 39鎶€鑳?路 鏃?task 渚濊禆锛?       鈫?鍚堝苟
-Multi-Agent Automated Workflow锛堝弻妯″紡 路 40鎶€鑳?路 鑷€傚簲锛?```
+workflow-task（支持 task 的工具 · 40 技能）
+       ↓ 改造
+workflow-inline（纯 inline · 39 技能 · 无 task 依赖）
+       ↓ 合并
+Workflow-Dualmode（双模式 · 40 技能 · 自适应）
+```
 
-## 閰嶇疆
+## 更新日志
 
-- `MIMO_API_URL`锛歚https://api.xiaomimimo.com/v1/chat/completions`
-- `MIMO_API_KEY`锛氬瓨鍏?`.env`锛岄厤缃紩鐢?`${MI*******KEY}`
-- `DEEPSEEK_API_KEY`锛氬伐浣滄祦鎺ㄧ悊
+### v4.1.3（2026-07-13）— 全平台适配
+
+- MCP 独立发布：`tonyq-mimo-mcp-server` v0.2.2，默认 Standard API
+- 安装器自动检测 MiMo 端点类型
+- 技能目录清理：移除 reasonix- 前缀
+- 路径中性化：`.reasonix/skills` → `skills/`
+
+### v4.1.2（2026-07-13）
+
+- MCP 服务迁移：`mimo-mcp-server` → `tonyq-mimo-mcp-server`
+- 工具名对齐：统一加 `mimo_` 前缀
+- 环境变量修复：`MIMO_API_BASE` → `MIMO_API_URL`
