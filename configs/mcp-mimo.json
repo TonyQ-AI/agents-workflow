@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "mimo-multimodal": {
+      "name": "mimo-multimodal",
+      "description": "小米 MiMo 多模态 MCP 服务器 — 图片/音频/视频理解 + TTS + ASR",
+      "command": "npx",
+      "args": [
+        "-y",
+        "tonyq-mimo-mcp-server"
+      ],
+      "env": {
+        "MIMO_API_URL": "https://api.xiaomimimo.com/v1/chat/completions",
+        "MIMO_API_KEY": "${MIMO_API_KEY}"
+      }
+    }
+  },
+  "skills": {
+    "image": "mimo-image-understanding",
+    "audio": "mimo-audio-understanding",
+    "video": "mimo-video-understanding",
+    "tts": "mimo-tts"
+  }
+}
