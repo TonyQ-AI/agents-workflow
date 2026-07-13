@@ -1,208 +1,119 @@
 ---
 name: reasonix-workflow
-description: "一键安装 Reasonix 全流程开发工作流——包含 7 步编排、进度跟踪、架构评审、UI 设计。需要 GitHub 仓库 URL 作为参数。"
+description: "一键安装 Reasonix 全流程开发工作流——说「装工作流」自动搞定"
 ---
 
-# Reasonix Workflow 安装器
+# Reasonix Workflow 一键安装器
 
-## 概述
+当用户说「装工作流」、`安装 Reasonix 工作流`、`/reasonix-workflow` 时，按以下步骤执行。
 
-本技能用于将 Reasonix 多Agent协同开发工作流安装到任意 Reasonix 项目中。
+## 一句话安装流程
 
-**包含 22 个核心技能 + 可选 4 个 MiMo 多模态技能，按用途分为 5 组：**
-
-### 核心工作流（7个）
-| 技能 | 作用 | 模型 |
-|------|------|------|
-| **wf-orchestrator** | 主编排器，串联 8 阶段全流程 | — |
-| **wf-planner** | 需求分析、任务分解 | Pro 🧠 |
-| **wf-architect** | 系统架构设计、接口定义 | Pro 🧠 |
-| **wf-developer** | 代码实现、单元测试 | Flash ⚡ |
-| **wf-tester** | 测试用例设计、执行 | Flash ⚡ |
-| **wf-reviewer** | 代码审查、质量裁决 | Pro 🧠 |
-| **wf-deployer** | 构建打包、部署方案 | Flash ⚡ |
-
-### 架构评审与扫描（1个技能，2种用法）
-| 技能 | 用法 | 作用 |
-|------|------|------|
-| **reasonix-arch-review** | 架构评审（编码前） | 专家模拟 + 6维评分 + Go/No-Go |
-| | 架构扫描（编码后） | 删除测试 + 依赖图 + HTML报告 |
-
-### 方法论注入（5个）
-| 技能 | 注入阶段 | 作用 |
-|------|---------|------|
-| **test-driven-development** | 编码 | 红→绿→重构循环 |
-| **systematic-debugging** | 编码（修Bug） | 定位→分析→假设→修复→验证 |
-| **dispatching-parallel-agents** | 测试 | 并行执行独立测试 |
-| **requesting-code-review** | 审查 | 逐文件标注行号 |
-| **chinese-code-review** | 审查 | 建设性中文反馈 |
-
-### 规划与支撑（5个）
-| 技能 | 作用 |
-|------|------|
-| **brainstorming** | 需求分析、方案对比 |
-| **writing-plans** | 计划生成 + 三文件跟踪 |
-| **executing-plans** | 自动检测进度、中断续做 |
-| **reasonix-domain-modeling** | 领域建模、通用语言、ADR |
-| **reasonix-handoff** | 会话交接 |
-
-### 扩展能力（4个）
-| 技能 | 作用 |
-|------|------|
-| **reasonix-ui-design** | 专业UI设计（防AI模板） |
-| **workflow-runner** | 通用 YAML 工作流执行器 |
-| **finishing-a-development-branch** | 分支集成规范 |
-| **verification-before-completion** | 完成前自动验证 |
-
-**额外安装：**
-- `AGENTS.md` — 进度检查兜底规则
-- ✅ `mimo-multimodal` MCP 已配置（MiMo 多模态 — 图片/音频/视频理解 + TTS）
-  需设置环境变量 `MIMO_API_KEY`，参考 `mimo-agent-skill/configs/mcp-mimo.json`
-- ✅ `baidu-ocr-document` MCP 已配置（百度 Unlimited-OCR — 文档解析/OCR/结构化识别）
-  需设置环境变量 `BAIDU_OCR_API_KEY`
-- 对应技能：`mimo-image-understanding`、`mimo-audio-understanding`、`mimo-video-understanding`、`mimo-tts`、`baidu-unlimited-ocr`
-
-## 安装方式
-
-### 直接跟我说
-
-```
-你：装 Reasonix 工作流
-→ 我会引导你输入 GitHub 仓库 URL，自动完成安装
-```
-
-### 或用你准备好的仓库
-
-如果你已经把自己的工作流推到 GitHub，直接给我仓库地址：
-
-```
-你：装 Reasonix 工作流，仓库 https://github.com/xxx/reasonix-workflow
-→ 一键安装
-```
-
-## 仓库结构要求
-
-你的 GitHub 仓库应包含以下文件：
-
-```
-reasonix-workflow/
-├── README.md
-├── LICENSE
-│
-├── skills/
-│   ├── wf-orchestrator/SKILL.md
-│   ├── writing-plans/SKILL.md
-│   ├── executing-plans/SKILL.md
-│   ├── reasonix-ui-design/SKILL.md
-│   └── reasonix-arch-review/SKILL.md
-│
-├── configs/
-│   ├── AGENTS.md              ← 进度检查规则
-│   └── mcp-mimo.json          ← MiMo MCP 配置（已安装）
-│
-└── scripts/
-    └── install.ps1            ← Windows 安装脚本（可选）
-    └── install.sh             ← Mac/Linux 安装脚本（可选）
-```
-
-## 安装流程
-
-执行安装时按以下步骤操作：
-
-### 1. 获取仓库地址
-
-如果用户没提供仓库 URL，询问：
-> "请提供你的 Reasonix 工作流 GitHub 仓库地址（如 `https://github.com/xxx/reasonix-workflow`）"
-
-### 2. 下载并安装技能
+### 步骤1：克隆仓库
 
 ```powershell
-# 克隆仓库
-git clone --depth 1 <仓库URL> $env:TEMP/reasonix-workflow
+# 克隆到临时目录
+git clone --depth 1 https://github.com/TonyQ-AI/reasonix-workflow.git $env:TEMP/reasonix-workflow
 
 # 如果 git clone 失败（网络问题），尝试下载 ZIP：
-# Invoke-WebRequest -Uri "<仓库URL>/archive/refs/heads/main.zip" -OutFile $env:TEMP/workflow.zip
+# Invoke-WebRequest -Uri "https://github.com/TonyQ-AI/reasonix-workflow/archive/refs/heads/main.zip" -OutFile $env:TEMP/workflow.zip
+# Expand-Archive $env:TEMP/workflow.zip $env:TEMP/reasonix-workflow
 ```
 
-### 3. 复制到项目
+### 步骤2：复制技能
 
 ```powershell
-# 复制所有技能
+# 复制所有 40 个技能到项目
+New-Item -Path ".reasonix/skills" -ItemType Directory -Force | Out-Null
 Copy-Item -Recurse "$env:TEMP/reasonix-workflow/skills/*" ".reasonix/skills/" -Force
+```
 
-# 复制 AGENTS.md（追加模式，不覆盖已有内容）
+### 步骤3：配置 AGENTS.md（进度检查规则）
+
+```powershell
+$agentsRule = @"
+
+## 进度检查规则
+在任何操作开始之前，检查 docs/superpowers/plans/task_plan.md 是否存在。
+如果存在，读取它以了解当前执行进度。
+这一规则适用于所有对话，不论是否使用 wf-orchestrator 编排器。
+"@
 if (Test-Path "AGENTS.md") {
-    Add-Content -Path "AGENTS.md" -Value (Get-Content "$env:TEMP/reasonix-workflow/configs/AGENTS.md")
+    Add-Content -Path "AGENTS.md" -Value $agentsRule
 } else {
-    Copy-Item "$env:TEMP/reasonix-workflow/configs/AGENTS.md" "AGENTS.md"
+    Set-Content -Path "AGENTS.md" -Value $agentsRule
 }
 ```
 
-### 4. 验证安装
+### 步骤4：配置 MCP 服务器（MiMo 多模态）
+
+在 `reasonix.toml` 或对应配置文件中添加：
+
+```toml
+[[plugins]]
+name    = "mimo-multimodal"
+command = "npx"
+args    = ["-y", "tonyq-mimo-mcp-server"]
+env     = {
+  MIMO_API_URL  = "https://api.xiaomimimo.com/v1/chat/completions",
+  MIMO_API_KEY = "${MIMO_API_KEY}"
+}
+call_timeout_seconds = 600
+```
+
+### 步骤5：配置 API key
+
+**提示用户**设置以下环境变量（存入 `~/.reasonix/.env`）：
+
+```env
+DEEPSEEK_API_KEY=sk-xxxxx    # 工作流推理用（必填）
+MIMO_API_KEY=sk-xxxxx         # 多模态分析用（可选）
+```
+
+如果用户提供了 key，立即写入 `.env` 文件（先存后读规则）。
+
+### 步骤6：验证安装
 
 确认以下关键文件已就位：
 
-```markdown
+```
 - [ ] .reasonix/skills/wf-orchestrator/SKILL.md
-- [ ] .reasonix/skills/wf-planner/SKILL.md
+- [ ] .reasonix/skills/wf-orchestrator-engine/SKILL.md
 - [ ] .reasonix/skills/wf-architect/SKILL.md
 - [ ] .reasonix/skills/wf-developer/SKILL.md
 - [ ] .reasonix/skills/wf-tester/SKILL.md
 - [ ] .reasonix/skills/wf-reviewer/SKILL.md
 - [ ] .reasonix/skills/wf-deployer/SKILL.md
-- [ ] .reasonix/skills/reasonix-arch-review/SKILL.md
-- [ ] .reasonix/skills/brainstorming/SKILL.md
-- [ ] .reasonix/skills/writing-plans/SKILL.md
-- [ ] .reasonix/skills/executing-plans/SKILL.md
-- [ ] .reasonix/skills/reasonix-domain-modeling/SKILL.md
-- [ ] .reasonix/skills/reasonix-handoff/SKILL.md
-- [ ] .reasonix/skills/reasonix-ui-design/SKILL.md
-- [ ] .reasonix/skills/test-driven-development/SKILL.md
-- [ ] .reasonix/skills/systematic-debugging/SKILL.md
-- [ ] .reasonix/skills/dispatching-parallel-agents/SKILL.md
-- [ ] .reasonix/skills/requesting-code-review/SKILL.md
-- [ ] .reasonix/skills/chinese-code-review/SKILL.md
 - [ ] AGENTS.md 包含进度检查规则
 ```
 
-### 5. 报告结果
+### 步骤7：报告结果
 
 ```
-✅ Reasonix 多Agent协同开发工作流安装完成！
+✅ Reasonix 全流程开发工作流安装完成！
 
-已安装 22 个技能：
-  📋 核心工作流  — 7 个（规划→架构→编码→测试→审查→部署）
+已安装 40 个技能：
+  📋 核心工作流  — 8 个（编排器+引擎+6子Agent）
   🏛️ 架构评审/扫描 — 1 个技能，2 种用法
-  💡 方法论注入 — 5 个（TDD、系统化调试等）
-  📐 规划与支撑 — 5 个（领域建模、进度跟踪等）
-  🔧 扩展能力   — 4 个（UI设计、工作流执行器等）
+  💡 方法论注入 — 9 个（TDD、系统化调试等）
+  📐 规划与支撑 — 6 个（领域建模、进度跟踪等）
+  🔧 扩展能力   — 6 个（UI设计、工作流执行器等）
+  🎤 多模态 MCP — 4 个 MiMo 技能（含 tonyq-mimo-mcp-server）
 
 📄 AGENTS.md 进度检查规则已就位
+🔌 MiMo MCP 已配置（需设置 MIMO_API_KEY 环境变量）
 
 使用方式：
   /wf-orchestrator <项目名>: <需求描述>
 
 详细文档：
-  仓库地址/README.md
-```
-
-## 分发给他人
-
-想让别人也能用你的工作流：
-
-1. 把项目推到 GitHub：`https://github.com/你的用户名/reasonix-workflow`
-2. 告诉别人把本 SKILL.md 放到 `.reasonix/skills/reasonix-workflow/SKILL.md`
-3. 别人说"装 Reasonix 工作流"，输入你的仓库地址即可
-
-或者更简单——直接分享你的 GitHub 仓库地址，别人用以下命令一键装：
-
-```bash
-npx skills add https://github.com/你的用户名/reasonix-workflow --skill reasonix-workflow
+  https://github.com/TonyQ-AI/reasonix-workflow
 ```
 
 ## 注意事项
 
-- 安装前会检测是否已存在同名技能，存在则跳过（不覆盖用户自定义修改）
+- 安装前会检测是否已存在技能，不覆盖用户自定义修改
 - AGENTS.md 以追加方式写入，不覆盖已有内容
 - 如果 git clone 失败会自动切到 ZIP 下载模式
-- 安装完成后建议重启 Reasonix 使新技能生效
+- 安装完成后**建议重启 Reasonix** 使新技能生效
+- MiMo MCP 需要 `MIMO_API_KEY` 环境变量（存 `.env` 不硬编码）
