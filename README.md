@@ -2,7 +2,7 @@
 
 > 多Agent协同开发工作流 · 双模式自适应 · 40 个技能 · 全平台兼容
 
-[![Version](https://img.shields.io/badge/version-4.1.5-blue)](VERSION)
+[![Version](https://img.shields.io/badge/version-4.1.6-blue)](VERSION)
 [![Skills](https://img.shields.io/badge/skills-40-green)](skills/)
 
 ## 双模式自动切换
@@ -11,8 +11,8 @@
 
 | 模式 | 条件 | 子 Agent | 并行 | 适用工具 |
 |------|------|:------:|:----:|---------|
-| **正常模式** | task 工具可用 | 独立会话派发 | ✅ | 如Reasonix等支持 task 的工具 |
-| **inline 模式** | task 不可用 | 编排器亲自完成 | ❌ | Claude Code / Cursor / 其他 等不支持task的工具|
+| **正常模式** | task 工具可用 | 独立会话派发 | ✅ | 支持 task 的工具 |
+| **inline 模式** | task 不可用 | 编排器亲自完成 | ❌ | 不支持 task 的工具 |
 
 > 两种模式功能一致，仅子agent调度方式不同（12 项任务全覆盖），inline 模式仅执行速度略慢。详见 [技术手册 §5](WORKFLOW_MANUAL.md#5-双模式自动切换)。
 
@@ -44,6 +44,12 @@ agents-workflow（新版 · 双模式 · 40 技能 · 自适应）
 ```
 
 ## 更新日志
+
+### v4.1.6（2026-07-13）— 安装体验优化
+
+- **安装器智能检测**：自动检测本地是否已有 MiMo key，避免重复输入
+- **安装器交互强化**：DeepSeek key 不再询问（用户已配好推理 API），MiMo key 改为强制交互
+- **中性化**：移除安装器文档中 `reasonix.toml` 引用
 
 ### v4.1.5（2026-07-13）— 架构评审修复
 
