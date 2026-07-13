@@ -47,9 +47,42 @@ if (Test-Path "AGENTS.md") {
 }
 ```
 
-### 步骤4：配置 MCP 服务器（MiMo 多模态）
 
-在 `workflow.toml` 或对应配置文件中添加：
+### 步骤4：配置 MiMo MCP（先拿 key，后写配置）
+
+⚠️ **此步骤是强制交互。未完成前，禁止进入步骤5。**
+
+**第一步 — 检测本地是否已有 MiMo key：**
+检查当前工具的配置文件（如工具自己的 config、.env 等）中是否已存在 `MIMO_API_KEY`。
+
+**第二步 — 获取 key（根据检测结果交互）：**
+
+▸ 如果检测到已有 MiMo key：
+> 🔍 检测到你已配置 MiMo API Key，是否直接使用？
+> A) 直接使用 → 读取已有 key，跳到第三步
+> B) 重新输入 → 按下方「另行提供」流程
+> C) 跳过 → 不配置多模态，**必须告知**后果，跳到步骤5
+
+▸ 如果未检测到：
+> **必须停下来询问：**
+> 请提供 MiMo API Key（图片/音频/视频理解需要，没有可跳过但多模态功能不可用）：
+> 格式：sk-xxx***xxxx
+> - 用户提供了 → 继续第三步
+> - 用户明确说跳过 → 不配置多模态，**必须告知**："⚠️ 已跳过多模态配置，图片/音频/视频理解功能不可用"，跳到步骤5
+
+**第三步 — 自动检测端点（拿到 key 后立即执行，不可跳过）：**
+
+⚠️ **不要猜测或写死 URL。用用户的 key 逐个测试，哪个通就用哪个。**
+
+1. 先用 key 请求 `https://api.xiaomimimo.com/v1/chat/completions`
+   - 返回 200 → 标准 API，写入 `MIMO_API_URL = "https://api.xiaomimimo.com/v1/chat/completions"`
+2. 如果返回 401/403 → 再试 `https://token-plan-cn.xiaomimimo.com/v1/chat/completions`
+   - 返回 200 → Token Plan，写入对应的 URL
+3. 两个都失败 → 提示用户「API key 无效，请检查」，回到第二步重新询问
+
+**第四步 — 写入 MCP 配置（用检测到的正确 URL）：**
+
+检测成功后，写入工具配置文件：
 
 ```toml
 [[plugins]]
@@ -57,52 +90,18 @@ name    = "mimo-multimodal"
 command = "npx"
 args    = ["-y", "tonyq-mimo-mcp-server"]
 env     = {
-  MIMO_API_URL  = "https://api.xiaomimimo.com/v1/chat/completions",
-  MIMO_API_KEY = "${MIMO_API_KEY}"
+  MIMO_API_URL  = "<检测到的URL>",
+  MIMO_API_KEY  = "${MIMO_API_KEY}"
 }
 call_timeout_seconds = 600
 ```
 
+同时将 key 写入 `.env`（先存后读规则）。
 
-### 自动检测 MiMo 端点
+**第五步 — 确认完成：**
+> ✅ MiMo MCP 配置完成（端点：<检测到的URL>）。是否继续验证安装？
 
-用户提供 MIMO_API_KEY 后，自动测试两个端点：
-
-1. 先用 key 请求 `https://api.xiaomimimo.com/v1/chat/completions`
-   - 返回 200 → 标准 API，写入 `MIMO_API_URL = "https://api.xiaomimimo.com/v1/chat/completions"`
-2. 如果返回 401 → 再试 `https://token-plan-cn.xiaomimimo.com/v1/chat/completions`
-   - 返回 200 → Token Plan，写入对应的 URL
-3. 两个都 401 → 提示用户「API key 无效，请检查」
-
-无需用户手动选择，全自动判断。
-
-
-### 步骤5：配置 MiMo API key（必须执行，不可跳过）
-
-⚠️ **此步骤是强制交互。未完成前，禁止进入步骤6。**
-
-**第一步 — 检测本地是否已有 MiMo key：**
-检查当前工具的配置文件（如工具自己的 config、.env 等）中是否已存在 `MIMO_API_KEY`。
-
-**第二步 — 根据检测结果交互：**
-
-▸ 如果检测到已有 MiMo key：
-> 🔍 检测到你已配置 MiMo API Key，是否直接使用？
-> A) 直接使用 → 读取已有 key，自动检测端点，写入 MCP 配置
-> B) 重新输入 → 按下方「另行提供」流程
-> C) 跳过 → 不配置多模态，告知后果
-
-▸ 如果未检测到：
-> 请提供 MiMo API Key（图片/音频/视频理解需要，没有可跳过但多模态功能不可用）：
-> 格式：sk-xxx***xxxx
-> - 用户提供了 → 自动检测端点（见上方"自动检测 MiMo 端点"），写入 .env 和 MCP 配置
-> - 用户明确说跳过 → 跳过 MCP 配置，**必须告知**："⚠️ 已跳过多模态配置，图片/音频/视频理解功能不可用"
-
-**第三步 — 确认完成：**
-> ✅ MiMo API Key 配置完成。是否继续验证安装？
-
-
-### 步骤6：验证安装
+### 步骤5：验证安装
 
 确认以下关键文件已就位：
 
@@ -117,7 +116,7 @@ call_timeout_seconds = 600
 - [ ] AGENTS.md 包含进度检查规则
 ```
 
-### 步骤7：报告结果
+### 步骤6：报告结果
 
 ```
 ✅ workflow 全流程开发工作流安装完成！
