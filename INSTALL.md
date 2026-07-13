@@ -9,12 +9,12 @@
 在 Reasonix 对话中输入：
 
 ```
-装工作流
+装工作流 github.com/TonyQ-AI/reasonix-workflow
 ```
 
 AI 会自动克隆本仓库并完成全部安装。
 
-或者直接说 `/reasonix-workflow` 也能触发安装。
+或者直接说 `github.com/TonyQ-AI/reasonix-workflow` 也能触发安装。
 
 ---
 
