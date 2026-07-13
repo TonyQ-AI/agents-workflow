@@ -1,5 +1,5 @@
-﻿# Workspace-level Reasonix configuration.
-# Merged with F:\ReasonixTest\config.toml (global config).
+﻿# Workspace-level configuration.
+# Merged with global config.
 
 [sandbox]
 workspace_root = "F:\\projects"   # allow file writes under F:\\projects

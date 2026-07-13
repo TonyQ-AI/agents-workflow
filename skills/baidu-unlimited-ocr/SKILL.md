@@ -20,7 +20,7 @@ metadata:
 
 ### 方式一：MCP SSE（优先）
 
-适用于支持 MCP SSE 传输的工具（Reasonix、ZCode 等）。
+适用于支持 MCP SSE 传输的工具。
 
 ```toml
 [[plugins]]

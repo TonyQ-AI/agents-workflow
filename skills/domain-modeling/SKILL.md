@@ -3,7 +3,7 @@ name: domain-modeling
 description: "领域建模技能——当需要从需求中提取领域模型、定义实体和边界、建立通用语言时使用。在架构设计之前执行领域建模。"
 ---
 
-# Reasonix 领域建模
+# 领域建模
 
 ## 概述
 
@@ -24,13 +24,13 @@ description: "领域建模技能——当需要从需求中提取领域模型、
 ```
 brainstorming（需求分析）
     ↓
-reasonix-domain-modeling（领域建模）  ← 新加
+domain-modeling（领域建模）  ← 新加
     │  输出：领域模型文档 + 通用术语表
     ↓
 wf-architect（架构设计）
     │  输入领域模型，输出系统设计
     ↓
-reasonix-arch-review（架构评审）
+arch-review（架构评审）
 ```
 
 ## 建模流程
@@ -168,7 +168,7 @@ CONTEXT.md 变化过程：
     - 禁止使用"分享"（与"共享"同义，统一用"共享"）
 ```
 
-CONTEXT.md 的通用语言部分由 **reasonix-domain-modeling** 和 **brainstorming** 共同维护。任何对话中只要有术语澄清，就更新它。
+CONTEXT.md 的通用语言部分由 **domain-modeling** 和 **brainstorming** 共同维护。任何对话中只要有术语澄清，就更新它。
 
 ### 关键决策 → 实时写 ADR
 
@@ -232,7 +232,7 @@ ADR 格式（存到 docs/adr/）：
 | 阶段 | 技能 | 作用 |
 |------|------|------|
 | 需求分析 | brainstorming | 理解需求、输出规格 |
-| 领域建模 | **reasonix-domain-modeling**（本技能） | 提炼领域模型 + 通用语言 |
+| 领域建模 | **domain-modeling**（本技能） | 提炼领域模型 + 通用语言 |
 | 架构设计 | wf-architect | 基于领域模型做系统设计 |
-| 架构评审 | reasonix-arch-review | 评审架构是否准确映射领域 |
+| 架构评审 | arch-review | 评审架构是否准确映射领域 |
 | 编码 | wf-developer | 代码结构与领域模型对齐 |

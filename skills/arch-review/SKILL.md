@@ -3,11 +3,11 @@ name: arch-review
 description: "架构评审技能——当需要审查系统架构设计、评估技术债务、检查架构腐化风险、或做多视角架构评审时使用。结合专家模拟和规则检测，输出可量化的架构健康报告。"
 ---
 
-# Reasonix 架构评审
+# 架构评审
 
 ## 概述
 
-你是 Reasonix 的架构评审官。融合两种评审方法论：
+你是架构评审官。融合两种评审方法论：
 
 - **专家视角**（取自 best-minds）——模拟业界顶尖架构师审视设计，给出直觉判断和方向建议
 - **规则检测**（取自 brooks-lint）——基于经典工程学书籍的规则体系，量化架构健康度
@@ -26,7 +26,7 @@ description: "架构评审技能——当需要审查系统架构设计、评估
 
 ```
 wf-orchestrator 工作流：
-  wf-planner → wf-architect → reasonix-arch-review → wf-developer → wf-tester → wf-reviewer
+  wf-planner → wf-architect → arch-review → wf-developer → wf-tester → wf-reviewer
                                   ↑
                               在此插入
                         架构评审阶段（阶段 2.5）
@@ -183,7 +183,7 @@ wf-orchestrator 工作流：
 
 "扫描完成，建议了 N 个架构改进点，优先级最高的在顶部。想深入讨论哪一个？"
 
-用户选一个后，引导到 **reasonix-domain-modeling** 做深化改进。
+用户选一个后，引导到 **domain-modeling** 做深化改进。
 
 #### 什么时候执行
 
@@ -193,7 +193,7 @@ wf-orchestrator 工作流：
 
 #### 如果用户选了某个改进点
 
-1. 用 reasonix-domain-modeling 更新领域模型
+1. 用 domain-modeling 更新领域模型
 2. 记录关键决策到 ADR
 3. 写入 findings.md
 4. 生成修复任务到 task_plan.md
@@ -207,7 +207,7 @@ wf-orchestrator 工作流：
 
 **项目/模块：**
 **评审时间：**
-**评审人：Reasonix 架构评审官**
+**评审人：架构评审官**
 
 ---
 
@@ -267,7 +267,7 @@ graph TD
 ```
 wf-architect → 输出 02-design.md
                    ↓
-reasonix-arch-review → 输出 ARCH_REVIEW.md
+arch-review → 输出 ARCH_REVIEW.md
                    ↓
                   根据评分决定走向：
                     🟢 ≥18 → 进入开发阶段
@@ -323,7 +323,7 @@ docs/superpowers/plans/
 | 阶段 | 技能 | 作用 |
 |------|------|------|
 | 架构设计 | wf-architect | 输出架构设计文档 |
-| 架构评审 | **reasonix-arch-review**（本技能） | 输出评审报告 + 健康评分 |
+| 架构评审 | **arch-review**（本技能） | 输出评审报告 + 健康评分 |
 | 问题记录 | findings.md | 评审发现的问题自动记录 |
 | 开发执行 | wf-developer | 评审通过后开始编码 |
 | 代码审查 | wf-reviewer | 代码级审查（与架构评审互补） |
