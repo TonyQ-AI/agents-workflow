@@ -103,6 +103,11 @@
 
 ## 更新日志
 
+### v4.1.2（2026-07-13）
+
+- **MCP 服务迁移**：`mimo-mcp-server` 改为 `tonyq-mimo-mcp-server`，不再依赖 alionsss 发布的 npm 包
+- **工具名对齐**：缓存工具名统一加 `mimo_` 前缀（`understand_image` → `mimo_understand_image`），修复新版 server 不兼容问题
+
 ### v4.1.1（2026-07-13）
 
 引擎执行步骤全部改为无序列表，永久消除编号错误。
