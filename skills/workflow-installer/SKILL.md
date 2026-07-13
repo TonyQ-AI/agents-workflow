@@ -76,16 +76,30 @@ call_timeout_seconds = 600
 
 无需用户手动选择，全自动判断。
 
-### 步骤5：配置 API key
+### 步骤5：配置 API key（必须执行，不可跳过）
 
-**提示用户**设置以下环境变量（存入 `~/.workflow/.env`）：
+⚠️ **此步骤是强制交互。未完成 API key 配置前，禁止进入步骤6。**
 
-```env
-DEEPSEEK_API_KEY=sk-xxxxx    # 工作流推理用（必填）
-MIMO_API_KEY=sk-xxxxx         # 多模态分析用（可选）
+**第一步 — 问 DeepSeek key（必填）：**
+> 请提供 DeepSeek API Key（工作流推理必填）：
+> 格式：sk-xxx***xxxx
+
+用户提供后，写入 `.env`：
+```powershell
+$envPath = "$env:USERPROFILE\.workflow\.env"
+New-Item -Path (Split-Path $envPath) -ItemType Directory -Force | Out-Null
+Add-Content -Path $envPath -Value "DEEPSEEK_API_KEY=<用户提供的key>"
 ```
 
-如果用户提供了 key，立即写入 `.env` 文件（先存后读规则）。
+**第二步 — 问 MiMo key：**
+> 请提供 MiMo API Key（图片/音频/视频理解需要，没有可跳过但多模态功能不可用）：
+> 格式：sk-xxx***xxxx
+
+- 用户提供了 → 自动检测端点（见上方"自动检测 MiMo 端点"），写入 `.env` 和 MCP 配置
+- 用户明确说跳过 → 跳过 MCP 配置，**必须告知**："⚠️ 已跳过多模态配置，图片/音频/视频理解功能不可用"
+
+**第三步 — 确认完成：**
+> ✅ API Key 配置完成。是否继续验证安装？
 
 ### 步骤6：验证安装
 
