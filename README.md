@@ -103,6 +103,26 @@
 
 ## 更新日志
 
+### v4.1.3（2026-07-13）— 全平台适配
+
+**MCP 独立发布（v0.2.2）**
+- npm 包 `tonyq-mimo-mcp-server` v0.2.2，默认地址改为 Standard API（`api.xiaomimimo.com`）
+- Token Plan 用户自动或手动检测端点，无需手动配 URL
+- 不再依赖 alionsss 发布的旧包
+
+**安装器增强**
+- 自动检测 MiMo 端点类型：用户只输 key，自动判断 Standard/Token Plan
+- 一键升级支持：说「升级工作流」自动拉技能+修配置+清缓存
+
+**技能目录清理**
+- `reasonix-arch-review` → `arch-review`（5 个技能同步改名，消除品牌痕迹）
+- `.reasonix/skills` → `skills/`（路径中性化，适用于所有工具）
+- 配置引用改为 `workflow.toml`，不再硬编码 Reasonix
+
+**编码修复**
+- 修复 PowerShell Set-Content 导致的中文乱码问题（全部 .md 文件重新编码）
+
+
 ### v4.1.2（2026-07-13）
 
 - **MCP 服务迁移**：`mimo-mcp-server` 改为 `tonyq-mimo-mcp-server`，不再依赖 alionsss 发布的 npm 包
