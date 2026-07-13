@@ -186,25 +186,16 @@ if (Test-Path "workflow-task") { Remove-Item -Recurse -Force "workflow-task" }
 Copy-Item -Recurse "$env:TEMP/rw-upgrade/skills/*" ".workflow/skills/" -Force
 ```
 
-### 步骤2：更新 MCP 配置（先测试端点，再写正确配置）
-
-⚠️ **不要盲替换 URL。读取现有 key，测试两个端点，哪个通写哪个。**
-
-1. 读取现有 `workflow.toml`（或对应工具配置）
-2. 提取已有的 `MIMO_API_KEY`（如果存在）
-3. 修正包名：`mimo-mcp-server` → `tonyq-mimo-mcp-server`
-4. 修正环境变量名：`MIMO_API_BASE` → `MIMO_API_URL`
-5. 用现有 key 测试两个端点（同安装流程第三步）：
-   - 先测 `api.xiaomimimo.com/v1/chat/completions` → 200 就写入
-   - 不通 → 测 `token-plan-cn.xiaomimimo.com/v1/chat/completions` → 200 就写入
-   - 两个都不通 → 保留现有 URL 不做修改，提示用户检查 key
-6. 写入正确定位到的 URL
-
-### 步骤3：清除 MCP 缓存
+### 步骤2：清除 MCP 缓存
 ```powershell
 $cacheFile = "$env:LOCALAPPDATA\workflow\mcp\mimo-multimodal.json"
 if (Test-Path $cacheFile) { Remove-Item $cacheFile -Force; Write-Output "MCP 缓存已清除" }
 ```
+
+### 步骤3：配置 MiMo MCP
+
+→ **直接执行上方安装流程的「步骤4：配置 MiMo MCP」**（先拿 key → 测端点 → 写正确配置）。
+升级和安装共用同一套逻辑，不维护两套。
 
 ### 步骤4：更新 AGENTS.md
 ```powershell
@@ -219,15 +210,14 @@ if (-not $agentsCheck) { Add-Content -Path "AGENTS.md" -Value "`n## 进度检查
 ✨ 新版本变化：
   🏷️  不再依赖单一工具 — 品牌中性化，支持所有 AI coding 工具
   🔀 双模式自适应 — 有 task 用正常模式，没有自动 fallback inline
-  🛠️ MCP 修复 — mimo-mcp-server → tonyq-mimo-mcp-server（修复 401/404）
+  🛠️ MCP 修复 — 自动检测端点，不再 401/404
   📦 新仓库 — github.com/TonyQ-AI/agents-workflow
 
 📋 技术细节：
   技能已更新到最新版（40 个）
-  MCP 配置：mimo-mcp-server → tonyq-mimo-mcp-server
-  环境变量：MIMO_API_BASE → MIMO_API_URL（带 /chat/completions）
-  旧版残留已清理
   MCP 缓存已清除
+  MCP 端点已重新检测
+  旧版残留已清理
 
 请重启工具使新配置生效
 ```
